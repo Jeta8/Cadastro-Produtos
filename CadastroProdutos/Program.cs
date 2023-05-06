@@ -33,8 +33,6 @@
 
         public static void Main()
         {
-            // Inicializa o sistema
-            InicializarSistema();
 
             // Loop principal do sistema
             while (true)
@@ -46,19 +44,15 @@
                     Console.WriteLine("Fazer login");
                     Console.WriteLine("1 - Fazer login");
                     Console.WriteLine("2 - Cadastrar Operador");
-                    Console.WriteLine("3 - Sair");
                     Console.Write("Opção: ");
                     string opcao = Console.ReadLine();
                     switch (opcao)
                     {
                         case "1":
-                            Login.Login();
+                            cLogin.Login();
                             break;
                         case "2":
-                            CadastrarOperador.CadastrarOperador();
-                            break;
-                        case "3":
-                            Sair.Sair();
+                            cCadastrarOperador.CadastrarOperador();
                             break;
                         default:
                             Console.WriteLine("Opção inválida!");
@@ -70,15 +64,18 @@
                 else
                 {
                     // Se estiver, mostra o menu principal
-                    MenuPrincipal();
+                    Console.Clear();
+                    cMenuPrincipal.MenuPrincipal();
                 }
             }
         }
+
+
     }
 
     // Path: Login.cs
 
-    public class Login
+    public class cLogin
     {
         public static void Login()
         {
@@ -110,12 +107,27 @@
             // Se não estiverem, mostra uma mensagem de erro
             Console.WriteLine("Login ou senha incorretos!");
             Console.ReadKey();
+            Console.Clear();
+        }
+
+        public static void Logout()
+        {
+            if (App.OperadorLogado != null)
+            {
+                App.OperadorLogado = null;
+                Console.Clear();
+                Console.WriteLine("Voce saiu do sistema com sucesso");
+                Console.ReadKey();
+                Login();
+            }
         }
     }
 
+
+
     // Path: MenuPrincipal.cs
 
-    public class MenuPrincipal
+    public class cMenuPrincipal
     {
         public static void MenuPrincipal()
         {
@@ -129,45 +141,81 @@
             Console.WriteLine("Operador: " + App.OperadorLogado.NomeOperador);
 
             // Mostra o menu
-            Console.WriteLine("1 - Cadastrar Operador");
-            Console.WriteLine("2 - Cadastrar Produto");
-            Console.WriteLine("3 - Listar Produtos");
-            Console.WriteLine("4 - Vender Produto");
-            Console.WriteLine("5 - Sair");
+            if (App.OperadorLogado.NivelAcesso == NiveisAcesso.Administrador)
+            {
+                Console.WriteLine("1 - Cadastrar Operador");
+                Console.WriteLine("2 - Cadastrar Produto");
+                Console.WriteLine("3 - Listar Produtos");
+                Console.WriteLine("4 - Vender Produto");
+                Console.WriteLine("5 - Sair");
+            }
+            else
+            {
+                Console.WriteLine("1 - Listar Produtos");
+                Console.WriteLine("2 - Vender Produto");
+                Console.WriteLine("3 - Sair");
+            }
+
+
 
             // Pede a opção
             Console.Write("Opção: ");
             string opcao = Console.ReadLine();
 
             // Verifica a opção
-            switch (opcao)
+            if (App.OperadorLogado.NivelAcesso == NiveisAcesso.Administrador)
             {
-                case "1":
-                    CadastrarOperador();
-                    break;
-                case "2":
-                    CadastrarProduto();
-                    break;
-                case "3":
-                    ListarProdutos();
-                    break;
-                case "4":
-                    VenderProduto();
-                    break;
-                case "5":
-                    Sair();
-                    break;
-                default:
-                    Console.WriteLine("Opção inválida!");
-                    Console.ReadKey();
-                    break;
+                switch (opcao)
+                {
+                    case "1":
+                        cCadastrarOperador.CadastrarOperador();
+                        break;
+                    case "2":
+                        cCadastrarProduto.CadastrarProduto();
+                        break;
+                    case "3":
+                        cListarProdutos.ListarProdutos();
+                        break;
+                    case "4":
+                        cVenderProduto.VenderProduto();
+                        break;
+                    case "5":
+                        cLogin.Logout();
+                        break;
+
+                    default:
+                        Console.WriteLine("Opção inválida!");
+                        Console.ReadKey();
+                        break;
+                }
             }
+            else
+            {
+                switch (opcao)
+                {
+                    case "1":
+                        cListarProdutos.ListarProdutos();
+                        break;
+                    case "2":
+                        cVenderProduto.VenderProduto();
+                        break;
+                    case "3":
+                        cLogin.Logout();
+                        break;
+
+                    default:
+                        Console.WriteLine("Opção inválida!");
+                        Console.ReadKey();
+                        break;
+                }
+            }
+
         }
     }
 
     // Path: CadastrarOperador.cs
 
-    public class CadastrarOperador
+    public class cCadastrarOperador
     {
         public static void CadastrarOperador()
         {
@@ -202,7 +250,7 @@
             string nomeOperador = Console.ReadLine();
 
             // Pede o nível de acesso
-            Console.Write("Nível de Acesso (1 - Operador, 2 - Administrador): ");
+            Console.Write("Nível de Acesso (1 - Operador  ||  2 - Administrador): ");
             string nivelAcesso = Console.ReadLine();
 
             // Verifica o nível de acesso
@@ -233,14 +281,20 @@
             App.QuantidadeOperadores++;
 
             // Mostra uma mensagem de sucesso
-            Console.WriteLine("Operador cadastrado com sucesso!");
+            if (operador.NivelAcesso != NiveisAcesso.Administrador)
+            {
+                Console.WriteLine("Operador cadastrado com sucesso!");
+            }
+            else { Console.WriteLine("Administrador cadastrado com sucesso!"); }
+
             Console.ReadKey();
+            Console.Clear();
         }
     }
 
     // Path: CadastrarProduto.cs
 
-    public class CadastrarProduto
+    public class cCadastrarProduto
     {
         public static void CadastrarProduto()
         {
@@ -261,6 +315,7 @@
                 {
                     // Se existir, mostra uma mensagem de erro
                     Console.WriteLine("Produto já existe!");
+                  
                     Console.ReadKey();
                     return;
                 }
@@ -269,6 +324,26 @@
             // Pede o código de barras
             Console.Write("Código de Barras: ");
             string codigoBarras = Console.ReadLine();
+
+            for (int i = 0; i < App.QuantidadeProdutos; i++)
+            {
+                if (App.Mercado[i].CodigoBarras == codigoBarras)
+                {
+                    Console.WriteLine("Codigo de barras ja registrado!");
+                    Console.WriteLine(" Deseja cadastrar o produto mas com outro codigo de barras? (S/N)");
+                    string opcao = Console.ReadLine();
+                    if (opcao.ToUpper() == "S")
+                    {
+                        Console.Write("Código de Barras: ");
+                        codigoBarras = Console.ReadLine();
+                        continue;
+                    }
+                    else if (opcao.ToUpper() == "N")
+                    {
+                        return;
+                    }
+                }
+            }
 
             // Pede o preço do produto
             Console.Write("Preço do Produto: ");
@@ -290,14 +365,36 @@
             App.QuantidadeProdutos++;
 
             // Mostra uma mensagem de sucesso
-            Console.WriteLine("Produto cadastrado com sucesso!");
-            Console.ReadKey();
+            Console.WriteLine("Produto cadastrado com sucesso!\n");
+            Console.WriteLine("Nome do Produto: " + nomeProduto);
+            Console.WriteLine("Código de Barras: " + codigoBarras);
+            Console.WriteLine("Preço do Produto: " + precoProduto);
+            Console.WriteLine("Estoque do Produto: " + estoqueProduto);
+            Console.WriteLine();
+            Console.WriteLine("Deseja cadastrar um novo produto? (S/N)");
+            string confirmacao = Console.ReadLine();
+
+            // Verifica a confirmação
+            if (confirmacao.ToUpper() == "S")
+            {
+                Console.Clear();
+                cCadastrarProduto.CadastrarProduto();
+
+            }
+            else
+            {
+                Console.WriteLine("Esses foram os produtos cadastrados ate o momento:");
+                cListarProdutos.ListarProdutos();
+                Console.ReadKey();
+                Console.Clear();
+                cMenuPrincipal.MenuPrincipal();
+            }
         }
     }
 
     // Path: ListarProdutos.cs
 
-    public class ListarProdutos
+    public class cListarProdutos
     {
         public static void ListarProdutos()
         {
@@ -306,16 +403,23 @@
 
             // Mostra o título
             Console.WriteLine("Listar Produtos");
-
-            // Mostra os produtos
-            for (int i = 0; i < App.QuantidadeProdutos; i++)
+            if ( App.QuantidadeProdutos == 0 )
             {
-                Console.WriteLine("Nome do Produto: " + App.Mercado[i].NomeProduto);
-                Console.WriteLine("Código de Barras: " + App.Mercado[i].CodigoBarras);
-                Console.WriteLine("Preço do Produto: " + App.Mercado[i].PrecoProduto);
-                Console.WriteLine("Estoque do Produto: " + App.Mercado[i].EstoqueProduto);
-                Console.WriteLine();
+                Console.WriteLine("\nNão há produtos registrados ainda\n");
             }
+            else
+            {
+                for (int i = 0; i < App.QuantidadeProdutos; i++)
+                {
+                    Console.WriteLine("Nome do Produto: " + App.Mercado[i].NomeProduto);
+                    Console.WriteLine("Código de Barras: " + App.Mercado[i].CodigoBarras);
+                    Console.WriteLine("Preço do Produto: " + App.Mercado[i].PrecoProduto);
+                    Console.WriteLine("Estoque do Produto: " + App.Mercado[i].EstoqueProduto);
+                    Console.WriteLine();
+                }
+            }
+
+
 
             // Pede para o usuário pressionar uma tecla para continuar
             Console.WriteLine("Pressione uma tecla para continuar...");
@@ -325,7 +429,7 @@
 
     // Path: VenderProduto.cs
 
-    public class VenderProduto
+    public class cVenderProduto
     {
         public static void VenderProduto()
         {
@@ -369,6 +473,7 @@
             {
                 // Se não for, mostra uma mensagem de erro
                 Console.WriteLine("Quantidade inválida!");
+                Console.WriteLine("Estoque disponivel: " + produto.EstoqueProduto);
                 Console.ReadKey();
                 return;
             }
@@ -377,7 +482,7 @@
             decimal total = produto.PrecoProduto * int.Parse(quantidade);
 
             // Mostra o total
-            Console.WriteLine("Total: " + total);
+            Console.WriteLine("Total: R$" + total);
 
             // Pede para o usuário confirmar a venda
             Console.Write("Confirmar a venda? (S/N): ");
@@ -394,96 +499,6 @@
                 Console.ReadKey();
             }
         }
-    }
-
-    // Path: Program.cs
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            // Inicializa o array de operadores
-            App.Operadores = new Operadores[100];
-
-            // Inicializa o array de produtos
-            App.Mercado = new Mercado[100];
-
-            // Inicializa a quantidade de operadores
-            App.QuantidadeOperadores = 0;
-
-            // Inicializa a quantidade de produtos
-            App.QuantidadeProdutos = 0;
-
-            // Mostra o menu
-            while (true)
-            {
-                // Limpa a tela
-                Console.Clear();
-
-                // Mostra o menu
-                Console.WriteLine("1 - Cadastrar Operador");
-                Console.WriteLine("2 - Cadastrar Produto");
-                Console.WriteLine("3 - Listar Produtos");
-                Console.WriteLine("4 - Vender Produto");
-                Console.WriteLine("5 - Sair");
-
-                // Pede a opção
-                Console.Write("Opção: ");
-                string opcao = Console.ReadLine();
-
-                // Verifica a opção
-                switch (opcao)
-                {
-                    case "1":
-                        CadastrarOperador.CadastrarOperador();
-                        break;
-                    case "2":
-                        CadastrarProduto.CadastrarProduto();
-                        break;
-                    case "3":
-                        ListarProdutos.ListarProdutos();
-                        break;
-                    case "4":
-                        VenderProduto.VenderProduto();
-                        break;
-                    case "5":
-                        return;
-                    default:
-                        Console.WriteLine("Opção inválida!");
-                        Console.ReadKey();
-                        break;
-                }
-            }
-        }
-    }
-
-    // Path: Operadores.cs
-
-    public class Operadores
-    {
-        public string NomeOperador { get; set; }
-        public string LoginOperador { get; set; }
-        public string SenhaOperador { get; set; }
-    }
-
-    // Path: Mercado.cs
-
-    public class Mercado
-    {
-        public string NomeProduto { get; set; }
-        public string CodigoBarras { get; set; }
-        public decimal PrecoProduto { get; set; }
-        public int EstoqueProduto { get; set; }
-    }
-
-    // Path: App.cs
-
-    public class App
-    {
-        public static Operadores[] Operadores { get; set; }
-        public static Mercado[] Mercado { get; set; }
-        public static int QuantidadeOperadores { get; set; }
-        public static int QuantidadeProdutos { get; set; }
     }
 }
 

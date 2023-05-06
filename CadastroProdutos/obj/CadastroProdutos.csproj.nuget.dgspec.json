@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Jederson\\Documents\\GitHub\\CadastroProdutos\\CadastroProdutos\\CadastroProdutos.csproj": {}
+    "C:\\Users\\Jederson\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Jederson\\Documents\\GitHub\\CadastroProdutos\\CadastroProdutos\\CadastroProdutos.csproj": {
+    "C:\\Users\\Jederson\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Jederson\\Documents\\GitHub\\CadastroProdutos\\CadastroProdutos\\CadastroProdutos.csproj",
+        "projectUniqueName": "C:\\Users\\Jederson\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj",
         "projectName": "CadastroProdutos",
-        "projectPath": "C:\\Users\\Jederson\\Documents\\GitHub\\CadastroProdutos\\CadastroProdutos\\CadastroProdutos.csproj",
+        "projectPath": "C:\\Users\\Jederson\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj",
         "packagesPath": "C:\\Users\\Jederson\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Jederson\\Documents\\GitHub\\CadastroProdutos\\CadastroProdutos\\obj\\",
+        "outputPath": "C:\\Users\\Jederson\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Jederson\\AppData\\Roaming\\NuGet\\NuGet.Config",
