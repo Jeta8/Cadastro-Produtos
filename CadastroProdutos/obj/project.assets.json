@@ -8,19 +8,19 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Jederson\\.nuget\\packages\\": {}
+    "C:\\Users\\pc02\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Jederson\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj",
+      "projectUniqueName": "C:\\Users\\pc02\\OneDrive\\Documentos\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj",
       "projectName": "CadastroProdutos",
-      "projectPath": "C:\\Users\\Jederson\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj",
-      "packagesPath": "C:\\Users\\Jederson\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Jederson\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\obj\\",
+      "projectPath": "C:\\Users\\pc02\\OneDrive\\Documentos\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj",
+      "packagesPath": "C:\\Users\\pc02\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\pc02\\OneDrive\\Documentos\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Jederson\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\pc02\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -61,7 +61,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

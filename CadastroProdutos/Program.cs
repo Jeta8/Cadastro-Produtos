@@ -34,7 +34,6 @@
         public static void Main()
         {
 
-            // Loop principal do sistema
             while (true)
             {
                 // Verifica se o operador está logado
@@ -63,7 +62,6 @@
                 }
                 else
                 {
-                    // Se estiver, mostra o menu principal
                     Console.Clear();
                     cMenuPrincipal.MenuPrincipal();
                 }
@@ -73,23 +71,18 @@
 
     }
 
-    // Path: Login.cs
 
     public class cLogin
     {
         public static void Login()
         {
-            // Limpa a tela
             Console.Clear();
 
-            // Mostra o título
             Console.WriteLine("Login");
 
-            // Pede o login
             Console.Write("Login: ");
             string login = Console.ReadLine();
 
-            // Pede a senha
             Console.Write("Senha: ");
             string senha = Console.ReadLine();
 
@@ -104,7 +97,6 @@
                 }
             }
 
-            // Se não estiverem, mostra uma mensagem de erro
             Console.WriteLine("Login ou senha incorretos!");
             Console.ReadKey();
             Console.Clear();
@@ -125,19 +117,15 @@
 
 
 
-    // Path: MenuPrincipal.cs
 
     public class cMenuPrincipal
     {
         public static void MenuPrincipal()
         {
-            // Limpa a tela
             Console.Clear();
 
-            // Mostra o título
             Console.WriteLine("Menu Principal");
 
-            // Mostra o nome do operador logado
             Console.WriteLine("Operador: " + App.OperadorLogado.NomeOperador);
 
             // Mostra o menu
@@ -158,11 +146,9 @@
 
 
 
-            // Pede a opção
             Console.Write("Opção: ");
             string opcao = Console.ReadLine();
 
-            // Verifica a opção
             if (App.OperadorLogado.NivelAcesso == NiveisAcesso.Administrador)
             {
                 switch (opcao)
@@ -213,23 +199,18 @@
         }
     }
 
-    // Path: CadastrarOperador.cs
 
     public class cCadastrarOperador
     {
         public static void CadastrarOperador()
         {
-            // Limpa a tela
             Console.Clear();
 
-            // Mostra o título
             Console.WriteLine("Cadastrar Operador");
 
-            // Pede o login
             Console.Write("Login: ");
             string login = Console.ReadLine();
 
-            // Verifica se o login já existe
             for (int i = 0; i < App.QuantidadeOperadores; i++)
             {
                 if (App.Operadores[i].Login == login)
@@ -241,19 +222,15 @@
                 }
             }
 
-            // Pede a senha
             Console.Write("Senha: ");
             string senha = Console.ReadLine();
 
-            // Pede o nome do operador
             Console.Write("Nome do Operador: ");
             string nomeOperador = Console.ReadLine();
 
-            // Pede o nível de acesso
             Console.Write("Nível de Acesso (1 - Operador  ||  2 - Administrador): ");
             string nivelAcesso = Console.ReadLine();
 
-            // Verifica o nível de acesso
             NiveisAcesso nivelAcessoEnum = NiveisAcesso.Nenhum;
             switch (nivelAcesso)
             {
@@ -269,18 +246,15 @@
                     return;
             }
 
-            // Cria o operador
             Operadores operador = new Operadores();
             operador.Login = login;
             operador.Senha = senha;
             operador.NomeOperador = nomeOperador;
             operador.NivelAcesso = nivelAcessoEnum;
 
-            // Adiciona o operador no array de operadores
             App.Operadores[App.QuantidadeOperadores] = operador;
             App.QuantidadeOperadores++;
 
-            // Mostra uma mensagem de sucesso
             if (operador.NivelAcesso != NiveisAcesso.Administrador)
             {
                 Console.WriteLine("Operador cadastrado com sucesso!");
@@ -292,28 +266,22 @@
         }
     }
 
-    // Path: CadastrarProduto.cs
 
     public class cCadastrarProduto
     {
         public static void CadastrarProduto()
         {
-            // Limpa a tela
             Console.Clear();
 
-            // Mostra o título
             Console.WriteLine("Cadastrar Produto");
 
-            // Pede o nome do produto
             Console.Write("Nome do Produto: ");
             string nomeProduto = Console.ReadLine();
 
-            // Verifica se o produto já existe
             for (int i = 0; i < App.QuantidadeProdutos; i++)
             {
                 if (App.Mercado[i].NomeProduto == nomeProduto)
                 {
-                    // Se existir, mostra uma mensagem de erro
                     Console.WriteLine("Produto já existe!");
                   
                     Console.ReadKey();
@@ -321,7 +289,6 @@
                 }
             }
 
-            // Pede o código de barras
             Console.Write("Código de Barras: ");
             string codigoBarras = Console.ReadLine();
 
@@ -345,26 +312,21 @@
                 }
             }
 
-            // Pede o preço do produto
             Console.Write("Preço do Produto: ");
             string precoProduto = Console.ReadLine();
 
-            // Pede o estoque do produto
             Console.Write("Estoque do Produto: ");
             string estoqueProduto = Console.ReadLine();
 
-            // Cria o produto
             Mercado produto = new Mercado();
             produto.NomeProduto = nomeProduto;
             produto.CodigoBarras = codigoBarras;
             produto.PrecoProduto = decimal.Parse(precoProduto);
             produto.EstoqueProduto = int.Parse(estoqueProduto);
 
-            // Adiciona o produto no array de produtos
             App.Mercado[App.QuantidadeProdutos] = produto;
             App.QuantidadeProdutos++;
 
-            // Mostra uma mensagem de sucesso
             Console.WriteLine("Produto cadastrado com sucesso!\n");
             Console.WriteLine("Nome do Produto: " + nomeProduto);
             Console.WriteLine("Código de Barras: " + codigoBarras);
@@ -374,11 +336,10 @@
             Console.WriteLine("Deseja cadastrar um novo produto? (S/N)");
             string confirmacao = Console.ReadLine();
 
-            // Verifica a confirmação
             if (confirmacao.ToUpper() == "S")
             {
                 Console.Clear();
-                cCadastrarProduto.CadastrarProduto();
+                CadastrarProduto();
 
             }
             else
@@ -392,16 +353,13 @@
         }
     }
 
-    // Path: ListarProdutos.cs
 
     public class cListarProdutos
     {
         public static void ListarProdutos()
         {
-            // Limpa a tela
             Console.Clear();
 
-            // Mostra o título
             Console.WriteLine("Listar Produtos");
             if ( App.QuantidadeProdutos == 0 )
             {
@@ -421,80 +379,62 @@
 
 
 
-            // Pede para o usuário pressionar uma tecla para continuar
             Console.WriteLine("Pressione uma tecla para continuar...");
             Console.ReadKey();
         }
     }
 
-    // Path: VenderProduto.cs
 
     public class cVenderProduto
     {
         public static void VenderProduto()
         {
-            // Limpa a tela
             Console.Clear();
 
-            // Mostra o título
             Console.WriteLine("Vender Produto");
 
-            // Pede o código de barras
             Console.Write("Código de Barras: ");
             string codigoBarras = Console.ReadLine();
 
-            // Verifica se o produto existe
             Mercado produto = null;
             for (int i = 0; i < App.QuantidadeProdutos; i++)
             {
                 if (App.Mercado[i].CodigoBarras == codigoBarras)
                 {
-                    // Se existir, armazena o produto
                     produto = App.Mercado[i];
                     break;
                 }
             }
 
-            // Verifica se o produto existe
             if (produto == null)
             {
-                // Se não existir, mostra uma mensagem de erro
                 Console.WriteLine("Produto não existe!");
                 Console.ReadKey();
                 return;
             }
 
-            // Pede a quantidade
             Console.Write("Quantidade: ");
             string quantidade = Console.ReadLine();
 
-            // Verifica se a quantidade é válida
             if (int.Parse(quantidade) > produto.EstoqueProduto)
             {
-                // Se não for, mostra uma mensagem de erro
                 Console.WriteLine("Quantidade inválida!");
                 Console.WriteLine("Estoque disponivel: " + produto.EstoqueProduto);
                 Console.ReadKey();
                 return;
             }
 
-            // Calcula o total
             decimal total = produto.PrecoProduto * int.Parse(quantidade);
 
-            // Mostra o total
             Console.WriteLine("Total: R$" + total);
 
-            // Pede para o usuário confirmar a venda
             Console.Write("Confirmar a venda? (S/N): ");
             string confirmacao = Console.ReadLine();
 
-            // Verifica a confirmação
             if (confirmacao.ToUpper() == "S")
             {
-                // Se for S, atualiza o estoque
                 produto.EstoqueProduto -= int.Parse(quantidade);
 
-                // Mostra uma mensagem de sucesso
                 Console.WriteLine("Venda realizada com sucesso!");
                 Console.ReadKey();
             }
