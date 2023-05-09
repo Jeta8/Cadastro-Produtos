@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\pc02\\OneDrive\\Documentos\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj": {}
+    "C:\\Users\\walla\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj": {}
   },
   "projects": {
-    "C:\\Users\\pc02\\OneDrive\\Documentos\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj": {
+    "C:\\Users\\walla\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\pc02\\OneDrive\\Documentos\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj",
+        "projectUniqueName": "C:\\Users\\walla\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj",
         "projectName": "CadastroProdutos",
-        "projectPath": "C:\\Users\\pc02\\OneDrive\\Documentos\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj",
-        "packagesPath": "C:\\Users\\pc02\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\pc02\\OneDrive\\Documentos\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\obj\\",
+        "projectPath": "C:\\Users\\walla\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\CadastroProdutos.csproj",
+        "packagesPath": "C:\\Users\\walla\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\walla\\Documents\\GitHub\\Cadastro-Produtos\\CadastroProdutos\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\pc02\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\walla\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -55,7 +55,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }

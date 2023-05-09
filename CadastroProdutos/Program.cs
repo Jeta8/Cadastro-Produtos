@@ -1,4 +1,6 @@
-﻿namespace CadastroProdutos
+﻿using System.Diagnostics;
+
+namespace CadastroProdutos
 {
     public enum NiveisAcesso
     {
@@ -33,6 +35,12 @@
 
         public static void Main()
         {
+            Operadores[0] = new Operadores();
+            Operadores[0].Login = "teste";
+            Operadores[0].Senha = "1";
+            Operadores[0].NivelAcesso = NiveisAcesso.Administrador;
+            Operadores[0].NomeOperador = "Wallas";
+            QuantidadeOperadores = 1;
 
             while (true)
             {
@@ -71,7 +79,6 @@
 
     }
 
-
     public class cLogin
     {
         public static void Login()
@@ -81,7 +88,7 @@
             Console.WriteLine("Login");
 
             Console.Write("Login: ");
-            string login = Console.ReadLine();
+            string login = Console.ReadLine();  
 
             Console.Write("Senha: ");
             string senha = Console.ReadLine();
@@ -114,8 +121,6 @@
             }
         }
     }
-
-
 
 
     public class cMenuPrincipal
@@ -232,6 +237,7 @@
             string nivelAcesso = Console.ReadLine();
 
             NiveisAcesso nivelAcessoEnum = NiveisAcesso.Nenhum;
+
             switch (nivelAcesso)
             {
                 case "1":
@@ -278,12 +284,20 @@
             Console.Write("Nome do Produto: ");
             string nomeProduto = Console.ReadLine();
 
+            // Aqui deixo um exemplo de código mais limpo em relação ao for, pode ser usado tanto em arrays como em listas
+            if (App.Mercado.FirstOrDefault(x => x != null && x.NomeProduto == nomeProduto) != null)
+            {
+                Console.WriteLine("Produto já existe!");
+                Console.ReadKey();
+                return;
+            }
+
+            // Aqui é a forma original que você fez
             for (int i = 0; i < App.QuantidadeProdutos; i++)
             {
                 if (App.Mercado[i].NomeProduto == nomeProduto)
                 {
                     Console.WriteLine("Produto já existe!");
-                  
                     Console.ReadKey();
                     return;
                 }
@@ -369,11 +383,16 @@
             {
                 for (int i = 0; i < App.QuantidadeProdutos; i++)
                 {
-                    Console.WriteLine("Nome do Produto: " + App.Mercado[i].NomeProduto);
-                    Console.WriteLine("Código de Barras: " + App.Mercado[i].CodigoBarras);
-                    Console.WriteLine("Preço do Produto: " + App.Mercado[i].PrecoProduto);
-                    Console.WriteLine("Estoque do Produto: " + App.Mercado[i].EstoqueProduto);
-                    Console.WriteLine();
+                    // Aqui um exemplo de como a função String.Format pode ser utilizada
+                    Console.WriteLine(String.Format(
+                        "Nome do Produto: {0}\n"+
+                        "Código de Barras: {1}\n"+
+                        "Preço do Produto: {2}\n"+
+                        "Estoque do Produto: {3}\n", 
+                        App.Mercado[i].NomeProduto, 
+                        App.Mercado[i].CodigoBarras, 
+                        App.Mercado[i].PrecoProduto, 
+                        App.Mercado[i].EstoqueProduto));
                 }
             }
 

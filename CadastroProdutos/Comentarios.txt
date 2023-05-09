@@ -1,0 +1,54 @@
+Observações da atividade semana 01:
+
+O programa todo está em um único .cs, as classes:
+
+cLogin
+cMenuPrincipal
+cCadastrarOperador
+cCadastrarProduto
+cListarProdutos
+cVenderProduto
+
+Poderiam estar listadas em arquivos separados, organizado em passas como:
+Controllers,
+Interfaces,
+Models...
+Organizar os arquivos do projeto é essencial para manutenção e fácil entendimento de terceiros
+
+Dica de estudo: Polimorfismo
+
+-----------------------
+
+A classe Operadores foi criada como um array, limitando a 10 o número de operadores. Por que?
+Em casos onde não existe tamanho definido é melhor trabalhar com lista, visto que o tamanho delas é indeterminado
+
+O mesmo para a classe Mercado, está limitado a 100 itens. Se o mercado tiver + que 100?
+
+-----------------------
+
+Notei que utiliza muito for para pequisa de objetos, considere utilizar System.Linq, deixa o código mais limpo,
+A não ser que precise fazer alguma operação nos elementos do array/lista.
+Deixei um exemplo na função CadastrarProduto
+
+Outra coisa, vi que filtra se o nome do produto já existe, por que? 
+acredito que filtrar somente pelo código de barras seja o ideal.
+
+-----------------------
+
+A variável QuantidadeProdutos está sendo responsável por dizer a quantidade de produtos, assim como a variável QuantidadeOperadores
+Essas variáveis poderiam não existir se você trabalhar com lista, visto que existe o método .Count e você pode utilizar foreach para operações na lista
+
+-----------------------
+
+Considere utilizar a função String.Format, que permite exibir strings de forma organizada através de argumentos
+Deixei um exemplo na função ListarProdutos
+
+-----------------------
+
+Bugs encontrados:
+
+A função CadastrarProduto permite a entrada de campos vazios, se digitar enter nos campos o programa trava na hora do cadastro, e também consigo cadastrar um produto com nome "" e valor definido
+
+A função CadastrarOperador permite o cadastro de operadores com todos os campos vazios exceto o de permissão
+
+A função VenderProduto permite a entrada de caracteres no campo de quantidade, ou o próprio campo vazio, travando o progama
