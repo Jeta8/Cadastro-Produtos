@@ -1,4 +1,12 @@
-﻿namespace CadastroProdutos
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using MySql.Data.MySqlClient;
+
+
+namespace CadastroProdutos
 {
     public enum NiveisAcesso
     {
@@ -10,6 +18,7 @@
     public class Operadores
     {
         public string Login = "";
+        public string loginTemp = "";
         public string Senha = "";
         public string NomeOperador = "";
         public NiveisAcesso NivelAcesso = NiveisAcesso.Nenhum;
@@ -93,16 +102,41 @@
             Console.Write("Senha: ");
             string senha = Console.ReadLine();
 
-            // Verifica se o login e a senha estão corretos
-            for (int i = 0; i < App.QuantidadeOperadores; i++)
+            // Verifica se o usuario existe no banco de dados
+
+            cConexao.Conectar();
+            string sql = "SELECT * FROM operadores WHERE login = '" + login + "' AND senha = '" + senha + "'";
+            MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            if (rdr.Read())
             {
-                if (App.Operadores[i].Login == login && App.Operadores[i].Senha == senha)
-                {
-                    // Se estiverem, faz o login
-                    App.OperadorLogado = App.Operadores[i];
-                    return;
-                }
+                // Se existir, armazena o operador
+                App.OperadorLogado = new Operadores();
+                App.OperadorLogado.Login = rdr["login"].ToString();
+                App.OperadorLogado.Senha = rdr["senha"].ToString();
+                App.OperadorLogado.NomeOperador = rdr["nome_operador"].ToString();
+                App.OperadorLogado.NivelAcesso = (NiveisAcesso)int.Parse(rdr["nivel_acesso"].ToString());
+                rdr.Close();
+                cConexao.Desconectar();
+                return;
             }
+            rdr.Close();
+            cConexao.Desconectar();
+
+
+
+
+
+            //// Verifica se o login e a senha estão corretos
+            //for (int i = 0; i < App.QuantidadeOperadores; i++)
+            //{
+            //    if (App.Operadores[i].Login == login && App.Operadores[i].Senha == senha)
+            //    {
+            //        // Se estiverem, faz o login
+            //        App.OperadorLogado = App.Operadores[i];
+            //        return;
+            //    }
+            //}
 
             // Se não estiverem, mostra uma mensagem de erro
             Console.WriteLine("Login ou senha incorretos!");
@@ -144,10 +178,12 @@
             if (App.OperadorLogado.NivelAcesso == NiveisAcesso.Administrador)
             {
                 Console.WriteLine("1 - Cadastrar Operador");
-                Console.WriteLine("2 - Cadastrar Produto");
-                Console.WriteLine("3 - Listar Produtos");
-                Console.WriteLine("4 - Vender Produto");
-                Console.WriteLine("5 - Sair");
+                Console.WriteLine("2 - Editar Operadores");
+                Console.WriteLine("3 - Cadastrar Produto");
+                Console.WriteLine("4 - Listar Produtos");
+                Console.WriteLine("5 - Vender Produto");
+                Console.WriteLine("6 - Listar Operadores");
+                Console.WriteLine("7 - Sair");
             }
             else
             {
@@ -167,19 +203,27 @@
             {
                 switch (opcao)
                 {
+
                     case "1":
                         cCadastrarOperador.CadastrarOperador();
                         break;
                     case "2":
-                        cCadastrarProduto.CadastrarProduto();
+                        cCadastrarOperador.AdmOperador();
                         break;
                     case "3":
-                        cListarProdutos.ListarProdutos();
+                        cCadastrarProduto.CadastrarProduto();
                         break;
                     case "4":
-                        cVenderProduto.VenderProduto();
+                        cListarProdutos.ListarProdutos();
                         break;
                     case "5":
+                        cVenderProduto.VenderProduto();
+                        break;
+                    case "6":
+                        cCadastrarOperador.ListarOperadores();
+                        break;
+
+                    case "7":
                         cLogin.Logout();
                         break;
 
@@ -280,6 +324,14 @@
             App.Operadores[App.QuantidadeOperadores] = operador;
             App.QuantidadeOperadores++;
 
+            // Adiciona operador no banco de dados
+            cConexao.Conectar();
+            string sql = "INSERT INTO operadores (login, senha, nome_operador, nivel_acesso) VALUES ('" + login + "', '" + senha + "', '" + nomeOperador + "', '" + nivelAcesso + "')";
+            MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+            cmd.ExecuteNonQuery();
+            cConexao.Desconectar();
+
+
             // Mostra uma mensagem de sucesso
             if (operador.NivelAcesso != NiveisAcesso.Administrador)
             {
@@ -289,6 +341,157 @@
 
             Console.ReadKey();
             Console.Clear();
+        }
+
+        public static void AdmOperador()
+        {
+            // Limpa a tela
+            Console.Clear();
+
+            // Mostra o título
+            Console.WriteLine("Editar Informações do Operador");
+
+            // Pede o login do operador a ser editado
+            Console.Write("Login do Operador: ");
+            string loginOperador = Console.ReadLine();
+
+            // Procura o operador pelo login no banco de dados
+            Operadores operador = null;
+            cConexao.Conectar();
+            string sql = "SELECT * FROM operadores WHERE login = '" + loginOperador + "'";
+            MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            if (rdr.Read())
+            {
+                // Se existir, armazena o operador
+                operador = new Operadores();
+                operador.Login = rdr["login"].ToString();
+                operador.Senha = rdr["senha"].ToString();
+                operador.NomeOperador = rdr["nome_operador"].ToString();
+                operador.NivelAcesso = (NiveisAcesso)int.Parse(rdr["nivel_acesso"].ToString());
+                rdr.Close();
+                cConexao.Desconectar();
+            }
+
+
+            // Verifica se o operador foi encontrado
+            if (operador == null)
+            {
+                Console.WriteLine("Operador não encontrado!");
+                Console.ReadKey();
+                return;
+            }
+
+            // Mostra as informações atuais do operador
+            Console.WriteLine("Informações Atuais:");
+            Console.WriteLine("Login: " + operador.Login);
+            Console.WriteLine("Senha: " + operador.Senha);
+            Console.WriteLine("Nome do Operador: " + operador.NomeOperador);
+            Console.WriteLine("Nível de Acesso: " + operador.NivelAcesso);
+
+            // Pede as novas informações do operador
+            Console.WriteLine("Digite as Novas Informações (ou deixe em branco para manter as informações atuais):");
+
+            Console.Write("Novo login: ");
+            string novoLogin = Console.ReadLine();
+
+            Console.Write("Nova Senha: ");
+            string novaSenha = Console.ReadLine();
+
+            Console.Write("Novo Nome do Operador: ");
+            string novoNomeOperador = Console.ReadLine();
+
+            Console.Write("Novo Nível de Acesso (1 - Operador || 2 - Administrador): ");
+            string novoNivelAcesso = Console.ReadLine();
+
+            // Verifica as novas informações
+            if (!string.IsNullOrEmpty(novaSenha))
+            {
+                operador.Senha = novaSenha;
+            }
+
+            if(!string.IsNullOrEmpty(novoLogin)) { 
+                operador.loginTemp = novoLogin;
+            }
+
+            if (!string.IsNullOrEmpty(novoNomeOperador))
+            {
+                operador.NomeOperador = novoNomeOperador;
+            }
+
+            if (!string.IsNullOrEmpty(novoNivelAcesso))
+            {
+                NiveisAcesso nivelAcessoEnum = NiveisAcesso.Nenhum;
+                switch (novoNivelAcesso)
+                {
+                    case "1":
+                        nivelAcessoEnum = NiveisAcesso.Operador;
+                        break;
+                    case "2":
+                        nivelAcessoEnum = NiveisAcesso.Administrador;
+                        break;
+                    default:
+                        Console.WriteLine("Nível de acesso inválido!");
+                        Console.ReadKey();
+                        return;
+                }
+
+                operador.NivelAcesso = nivelAcessoEnum;
+            }
+
+            // Atualiza as informações do operador no banco de dados
+            cConexao.Conectar();
+            sql = "UPDATE operadores SET login = '" + operador.loginTemp + "', senha = '" + operador.Senha + "', nome_operador = '" + operador.NomeOperador + "', nivel_acesso = '" + (int)operador.NivelAcesso + "' WHERE login = '" + operador.Login + "'";
+            cmd = new MySqlCommand(sql, cConexao.conexao);
+            cmd.ExecuteNonQuery();
+            cConexao.Desconectar();
+
+
+            Console.WriteLine("Informações do Operador atualizadas com sucesso!");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
+        public static void ListarOperadores()
+        {
+            Console.Clear();
+            // Conecta ao banco de dados
+            cConexao.Conectar();
+
+            // Define a consulta SQL para recuperar os operadores
+            string sql = "SELECT * FROM operadores";
+
+            // Cria o objeto MySqlCommand
+            MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+
+            // Executa a consulta SQL e obtém um objeto MySqlDataReader para ler os resultados
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            // Exibe os operadores
+            Console.WriteLine("Operadores cadastrados:");
+            Console.WriteLine("-----------------------");
+            while (reader.Read())
+            {
+                string login = reader.GetString("login");
+                string senha = reader.GetString("senha");
+                string nomeOperador = reader.GetString("nome_operador");
+                string nivelAcesso = reader.GetString("nivel_acesso");
+
+                Console.WriteLine("Login: " + login);
+                Console.WriteLine("Senha: " + senha);
+                Console.WriteLine("Nome do Operador: " + nomeOperador);
+                Console.WriteLine("Nível de Acesso: " + nivelAcesso);
+                Console.WriteLine("-----------------------");
+
+               
+            }
+
+            // Fecha o reader
+            Console.ReadKey();
+            reader.Close();
+
+            // Desconecta do banco de dados
+            cConexao.Desconectar();
         }
     }
 
@@ -315,7 +518,7 @@
                 {
                     // Se existir, mostra uma mensagem de erro
                     Console.WriteLine("Produto já existe!");
-                  
+
                     Console.ReadKey();
                     return;
                 }
@@ -364,6 +567,14 @@
             App.Mercado[App.QuantidadeProdutos] = produto;
             App.QuantidadeProdutos++;
 
+            // Adiciona produto no banco de dados
+            cConexao.Conectar();
+            string sql = "INSERT INTO produtos_cadastrados (nome_produto, codigo_barras, preco_produto, estoque_produto) VALUES ('" + nomeProduto + "', '" + codigoBarras + "', '" + precoProduto + "', '" + estoqueProduto + "')";
+            MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+            cmd.ExecuteNonQuery();
+            cConexao.Desconectar();
+
+
             // Mostra uma mensagem de sucesso
             Console.WriteLine("Produto cadastrado com sucesso!\n");
             Console.WriteLine("Nome do Produto: " + nomeProduto);
@@ -403,20 +614,27 @@
 
             // Mostra o título
             Console.WriteLine("Listar Produtos");
-            if ( App.QuantidadeProdutos == 0 )
+            if (App.QuantidadeProdutos == 0)
             {
                 Console.WriteLine("\nNão há produtos registrados ainda\n");
             }
             else
             {
-                for (int i = 0; i < App.QuantidadeProdutos; i++)
+                // lista produtos do banco de dados
+                cConexao.Conectar();
+                string sql = "SELECT * FROM produtos_cadastrados";
+                MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
                 {
-                    Console.WriteLine("Nome do Produto: " + App.Mercado[i].NomeProduto);
-                    Console.WriteLine("Código de Barras: " + App.Mercado[i].CodigoBarras);
-                    Console.WriteLine("Preço do Produto: " + App.Mercado[i].PrecoProduto);
-                    Console.WriteLine("Estoque do Produto: " + App.Mercado[i].EstoqueProduto);
+                    Console.WriteLine("Nome do Produto: " + rdr["nome_produto"]);
+                    Console.WriteLine("Código de Barras: " + rdr["codigo_barras"]);
+                    Console.WriteLine("Preço do Produto: " + rdr["preco_produto"]);
+                    Console.WriteLine("Estoque do Produto: " + rdr["estoque_produto"]);
                     Console.WriteLine();
                 }
+                rdr.Close();
+                cConexao.Desconectar();
             }
 
 
@@ -494,12 +712,38 @@
                 // Se for S, atualiza o estoque
                 produto.EstoqueProduto -= int.Parse(quantidade);
 
+                // Atualiza o banco de dados
+                cConexao.Conectar();
+                string sql = "UPDATE produtos_cadastrados SET estoque_produto = '" + produto.EstoqueProduto + "' WHERE codigo_barras = '" + produto.CodigoBarras + "'";
+                MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+                cmd.ExecuteNonQuery();
+                cConexao.Desconectar();
+
                 // Mostra uma mensagem de sucesso
                 Console.WriteLine("Venda realizada com sucesso!");
                 Console.ReadKey();
             }
         }
     }
+
+    // Path: Conexao.cs
+
+    public class cConexao
+    {
+        public static MySqlConnection conexao = new MySqlConnection("Server=localhost;Database=cadastro_produtos;Uid=root;Pwd=Jederson@28180622;");
+
+        public static void Conectar()
+        {
+            conexao.Open();
+        }
+
+        public static void Desconectar()
+        {
+            conexao.Close();
+        }
+    }
+
+
 }
 
 
