@@ -105,9 +105,14 @@ namespace CadastroProdutos
             // Verifica se o usuario existe no banco de dados
 
             cConexao.Conectar();
+
+            // SQL INJECT FÁCIL AQUI
             string sql = "SELECT * FROM operadores WHERE login = '" + login + "' AND senha = '" + senha + "'";
             MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+
+            // E se ocorrer uma falha na consulta? aonde tá o tratamento desse erro?
             MySqlDataReader rdr = cmd.ExecuteReader();
+
             if (rdr.Read())
             {
                 // Se existir, armazena o operador
@@ -120,11 +125,9 @@ namespace CadastroProdutos
                 cConexao.Desconectar();
                 return;
             }
+
             rdr.Close();
             cConexao.Desconectar();
-
-
-
 
 
             //// Verifica se o login e a senha estão corretos
@@ -328,9 +331,11 @@ namespace CadastroProdutos
             cConexao.Conectar();
             string sql = "INSERT INTO operadores (login, senha, nome_operador, nivel_acesso) VALUES ('" + login + "', '" + senha + "', '" + nomeOperador + "', '" + nivelAcesso + "')";
             MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+            
+            // Executa a query mas não existe validação nenhuma
             cmd.ExecuteNonQuery();
+            
             cConexao.Desconectar();
-
 
             // Mostra uma mensagem de sucesso
             if (operador.NivelAcesso != NiveisAcesso.Administrador)
@@ -358,9 +363,14 @@ namespace CadastroProdutos
             // Procura o operador pelo login no banco de dados
             Operadores operador = null;
             cConexao.Conectar();
+
+            // SQL inject..
             string sql = "SELECT * FROM operadores WHERE login = '" + loginOperador + "'";
             MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+
+            // Sem tratamento
             MySqlDataReader rdr = cmd.ExecuteReader();
+
             if (rdr.Read())
             {
                 // Se existir, armazena o operador
@@ -443,7 +453,10 @@ namespace CadastroProdutos
             cConexao.Conectar();
             sql = "UPDATE operadores SET login = '" + operador.loginTemp + "', senha = '" + operador.Senha + "', nome_operador = '" + operador.NomeOperador + "', nivel_acesso = '" + (int)operador.NivelAcesso + "' WHERE login = '" + operador.Login + "'";
             cmd = new MySqlCommand(sql, cConexao.conexao);
+
+            // Sem tratamento
             cmd.ExecuteNonQuery();
+
             cConexao.Desconectar();
 
 
@@ -465,6 +478,8 @@ namespace CadastroProdutos
             MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
 
             // Executa a consulta SQL e obtém um objeto MySqlDataReader para ler os resultados
+
+            // Sem tratamento
             MySqlDataReader reader = cmd.ExecuteReader();
 
             // Exibe os operadores
@@ -571,9 +586,11 @@ namespace CadastroProdutos
             cConexao.Conectar();
             string sql = "INSERT INTO produtos_cadastrados (nome_produto, codigo_barras, preco_produto, estoque_produto) VALUES ('" + nomeProduto + "', '" + codigoBarras + "', '" + precoProduto + "', '" + estoqueProduto + "')";
             MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
-            cmd.ExecuteNonQuery();
-            cConexao.Desconectar();
 
+            // Sem tratamento
+            cmd.ExecuteNonQuery();
+
+            cConexao.Desconectar();
 
             // Mostra uma mensagem de sucesso
             Console.WriteLine("Produto cadastrado com sucesso!\n");
@@ -624,7 +641,10 @@ namespace CadastroProdutos
                 cConexao.Conectar();
                 string sql = "SELECT * FROM produtos_cadastrados";
                 MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+
+                // Sem tratamento
                 MySqlDataReader rdr = cmd.ExecuteReader();
+
                 while (rdr.Read())
                 {
                     Console.WriteLine("Nome do Produto: " + rdr["nome_produto"]);
@@ -687,6 +707,8 @@ namespace CadastroProdutos
             string quantidade = Console.ReadLine();
 
             // Verifica se a quantidade é válida
+
+            // Se der erro na conversão = BUUUUM
             if (int.Parse(quantidade) > produto.EstoqueProduto)
             {
                 // Se não for, mostra uma mensagem de erro
@@ -714,9 +736,14 @@ namespace CadastroProdutos
 
                 // Atualiza o banco de dados
                 cConexao.Conectar();
+
+                // SQL inject...
                 string sql = "UPDATE produtos_cadastrados SET estoque_produto = '" + produto.EstoqueProduto + "' WHERE codigo_barras = '" + produto.CodigoBarras + "'";
                 MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+
+                // Sem tratamento
                 cmd.ExecuteNonQuery();
+
                 cConexao.Desconectar();
 
                 // Mostra uma mensagem de sucesso
@@ -730,7 +757,7 @@ namespace CadastroProdutos
 
     public class cConexao
     {
-        public static MySqlConnection conexao = new MySqlConnection("Server=localhost;Database=cadastro_produtos;Uid=root;Pwd=Jederson@28180622;");
+        public static MySqlConnection conexao = new MySqlConnection("Server=localhost;Database=cadastro_produtos;Uid=root;Pwd=123456;");
 
         public static void Conectar()
         {

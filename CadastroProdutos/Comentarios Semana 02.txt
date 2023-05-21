@@ -1,0 +1,28 @@
+Observações da atividade semana 02:
+
+Ajustes da semana 01 pendentes
+--------------
+
+- O programa inteiro está em 1 .cs só, já está em 700 linhas, vai separar quando?
+- O programa não carrega os produtos cadastrados no banco de dados quando inicia
+- Não existe verificação de produto já cadastrado no banco de dados
+
+- Falta validações nas funções de Venda, cadastro etc...
+--------------
+
+- O programa executa as querys do sql de forma insegura, posso fazer login com qualquer dado
+
+Experimente fazer login inserindo os dados:
+
+Login = qualquercoisa
+Senha = ' OR 1=1 -- 
+
+Documentação de apoio: https://jonathancrozier.com/blog/preventing-sql-injection-in-c-sharp-applications
+--------------
+
+- Não existe nenhum tratamento de erros de query no sql, se a consulta der erro o programa simplesmente trava.
+
+- Função AdmOperador(), se deixar o login em branco ele salva assim no banco de dados
+- Função AdmOperador(), não existe limitação de caracteres!!!
+- Função AdmOperador(), não existe verificação de edição de login duplicado no banco de dados
+--------------
