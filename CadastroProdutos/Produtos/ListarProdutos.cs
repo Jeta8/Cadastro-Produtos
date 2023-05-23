@@ -13,7 +13,6 @@ namespace CadastroProdutos
         {
             public static void ListarProdutos()
             {
-                // Limpa a tela
                 Console.Clear();
 
                 
@@ -40,7 +39,6 @@ namespace CadastroProdutos
                 cConexao.Desconectar();
 
 
-                // Pede para o usuário pressionar uma tecla para continuar
                 Console.WriteLine("Pressione uma tecla para continuar...");
                 Console.ReadKey();
             }

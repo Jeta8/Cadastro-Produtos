@@ -13,13 +13,10 @@ namespace CadastroProdutos
         {
             public static void CadastrarProduto()
             {
-                // Limpa a tela
                 Console.Clear();
 
-                // Mostra o título
                 Console.WriteLine("Cadastrar Produto");
 
-                // Pede o nome do produto mas bloqueando campos vazios
                 Console.Write("Nome do Produto: ");
                 string nomeProduto = Console.ReadLine();
                 while (nomeProduto == "")
@@ -31,7 +28,6 @@ namespace CadastroProdutos
                 
 
 
-                // Pede o código de barras
                 Console.Write("Código de Barras: ");
                 string codigoBarras = Console.ReadLine();
                 while (codigoBarras == "")
@@ -42,7 +38,6 @@ namespace CadastroProdutos
                 }
 
 
-               // Verifica se o produto ja existe buscando exatamente o mesmo codigo de barras
                 cConexao.Conectar();
                 string sql = "SELECT * FROM produtos_cadastrados WHERE codigo_barras = '" + codigoBarras + "'";
                 MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
@@ -71,7 +66,6 @@ namespace CadastroProdutos
                     }
                 }
 
-                // Pede o preço do produto
                 Console.Write("Preço do Produto: ");
                 string precoProduto = Console.ReadLine();
                 while (precoProduto == "")
@@ -81,7 +75,6 @@ namespace CadastroProdutos
                     precoProduto = Console.ReadLine();
                 }
 
-                // Pede o estoque do produto
                 Console.Write("Estoque do Produto: ");
                 string estoqueProduto = Console.ReadLine();
                 while (estoqueProduto == "")
@@ -91,22 +84,19 @@ namespace CadastroProdutos
                     estoqueProduto = Console.ReadLine();
                 }
 
-                // Cria o produto
                 Mercado produto = new Mercado();
                 produto.NomeProduto = nomeProduto;
                 produto.CodigoBarras = codigoBarras;
                 produto.PrecoProduto = decimal.Parse(precoProduto);
                 produto.EstoqueProduto = int.Parse(estoqueProduto);
 
-                // Adiciona produto no banco de dados
                 cConexao.Conectar();
                 sql = "INSERT INTO produtos_cadastrados (nome_produto, codigo_barras, preco_produto, estoque_produto) VALUES ('" + nomeProduto + "', '" + codigoBarras + "', '" + precoProduto + "', '" + estoqueProduto + "')";
                 cmd = new MySqlCommand(sql, cConexao.conexao);
                 cmd.ExecuteNonQuery();
                 cConexao.Desconectar();
+                // nome_produto string, codigo_barras string, preco_produto decimal, estoque_produto int
 
-
-                // Mostra uma mensagem de sucesso
                 Console.WriteLine("Produto cadastrado com sucesso!\n");
                 Console.WriteLine("Nome do Produto: " + nomeProduto);
                 Console.WriteLine("Código de Barras: " + codigoBarras);
@@ -116,11 +106,10 @@ namespace CadastroProdutos
                 Console.WriteLine("Deseja cadastrar um novo produto? (S/N)");
                 string confirmacao = Console.ReadLine();
 
-                // Verifica a confirmação
                 if (confirmacao.ToUpper() == "S")
                 {
                     Console.Clear();
-                    cCadastrarProduto.CadastrarProduto();
+                    CadastrarProduto();
 
                 }
                 else

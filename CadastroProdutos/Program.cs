@@ -44,13 +44,10 @@ namespace CadastroProdutos
         public static void Main()
         {
 
-            // Loop principal do sistema
             while (true)
             {
-                // Verifica se o operador está logado
                 if (OperadorLogado == null)
                 {
-                    // Se não estiver, faz o login
                     Console.WriteLine("Fazer login");
                     Console.WriteLine("1 - Fazer login");
                     Console.WriteLine("2 - Cadastrar Operador");
@@ -86,16 +83,12 @@ namespace CadastroProdutos
     {
         public static void MenuPrincipal()
         {
-            // Limpa a tela
             Console.Clear();
 
-            // Mostra o título
             Console.WriteLine("Menu Principal");
 
-            // Mostra o nome do operador logado
             Console.WriteLine("Operador: " + App.OperadorLogado.NomeOperador);
 
-            // Mostra o menu
             if (App.OperadorLogado.NivelAcesso == NiveisAcesso.Administrador)
             {
                 Console.WriteLine("1 - Cadastrar Operador");
@@ -116,7 +109,6 @@ namespace CadastroProdutos
             Console.Write("Opção: ");
             string opcao = Console.ReadLine();
 
-            // Verifica a opção
             if (App.OperadorLogado.NivelAcesso == NiveisAcesso.Administrador)
             {
                 switch (opcao)
