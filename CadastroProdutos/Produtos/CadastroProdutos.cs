@@ -90,11 +90,21 @@ namespace CadastroProdutos
                 produto.PrecoProduto = decimal.Parse(precoProduto);
                 produto.EstoqueProduto = int.Parse(estoqueProduto);
 
-                cConexao.Conectar();
-                sql = "INSERT INTO produtos_cadastrados (nome_produto, codigo_barras, preco_produto, estoque_produto) VALUES ('" + nomeProduto + "', '" + codigoBarras + "', '" + precoProduto + "', '" + estoqueProduto + "')";
-                cmd = new MySqlCommand(sql, cConexao.conexao);
-                cmd.ExecuteNonQuery();
-                cConexao.Desconectar();
+                try
+                {
+                    cConexao.Conectar();
+                    sql = "INSERT INTO produtos_cadastrados (nome_produto, codigo_barras, preco_produto, estoque_produto) VALUES ('" + nomeProduto + "', '" + codigoBarras + "', '" + precoProduto + "', '" + estoqueProduto + "')";
+                    cmd = new MySqlCommand(sql, cConexao.conexao);
+                    cmd.ExecuteNonQuery();
+                    cConexao.Desconectar();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Erro ao cadastrar produto: " + ex.Message);
+                    Console.ReadKey();
+                    return;
+                }
+              
                 // nome_produto string, codigo_barras string, preco_produto decimal, estoque_produto int
 
                 Console.WriteLine("Produto cadastrado com sucesso!\n");

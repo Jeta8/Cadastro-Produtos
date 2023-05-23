@@ -27,30 +27,60 @@ namespace CadastroProdutos
                 Console.Write("Senha: ");
                 string senha = Console.ReadLine();
 
-                // Verifica se o usuario existe no banco de dados
-
+                // Verifica se o usuario existe no banco de dados e protege de sql injection
                 cConexao.Conectar();
-                string sql = "SELECT * FROM operadores WHERE login = '" + login + "' AND senha = '" + senha + "'";
+                string sql = "SELECT * FROM operadores WHERE login = @login AND senha = @senha";
                 MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+                cmd.Parameters.AddWithValue("@login", login);
+                cmd.Parameters.AddWithValue("@senha", senha);
                 MySqlDataReader rdr = cmd.ExecuteReader();
-                if (rdr.Read())
-                {
-                    // Se existir, armazena o operador
-                    App.OperadorLogado = new Operadores();
-                    App.OperadorLogado.Login = rdr["login"].ToString();
-                    App.OperadorLogado.Senha = rdr["senha"].ToString();
-                    App.OperadorLogado.NomeOperador = rdr["nome_operador"].ToString();
-                    App.OperadorLogado.NivelAcesso = (NiveisAcesso)int.Parse(rdr["nivel_acesso"].ToString());
-                    rdr.Close();
-                    cConexao.Desconectar();
-                    return;
-                }
-                rdr.Close();
-                cConexao.Desconectar();
 
-                Console.WriteLine("Login ou senha incorretos!");
-                Console.ReadKey();
-                Console.Clear();
+                // Se o usuario existe
+                if (rdr.HasRows)
+                {
+                    // Ler o usuario
+                    rdr.Read();
+
+                    // Cria um objeto do tipo Operadores
+                    Operadores operador = new Operadores();
+
+                    // Preenche o objeto com os dados do banco de dados
+                    operador.Login = rdr["login"].ToString();
+                    operador.Senha = rdr["senha"].ToString();
+                    operador.NomeOperador = rdr["nome_operador"].ToString();
+                    operador.NivelAcesso = (NiveisAcesso)Convert.ToInt32(rdr["nivel_acesso"]);
+
+                    // Define o operador logado
+                    App.OperadorLogado = operador;
+
+                    // Desconecta do banco de dados
+                    cConexao.Desconectar();
+
+                    // Limpa a tela
+                    Console.Clear();
+
+                    // Mostra uma mensagem de sucesso
+                    Console.WriteLine("Login efetuado com sucesso");
+                    Console.ReadKey();
+
+                    // Chama o menu principal
+                    cMenuPrincipal.MenuPrincipal();
+                }
+                else
+                {
+                    // Desconecta do banco de dados
+                    cConexao.Desconectar();
+
+                    // Mostra uma mensagem de erro
+                    Console.WriteLine("Login ou senha incorretos");
+                    Console.ReadKey();
+                    return;
+                   
+                }
+
+                
+
+              
             }
 
             public static void Logout()
