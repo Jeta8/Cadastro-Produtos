@@ -170,7 +170,7 @@ namespace CadastroProdutos
 
     public class cConexao
     {
-        public static MySqlConnection conexao = new MySqlConnection("Server=localhost;Database=cadastro_produtos;Uid=root;Pwd=Jederson@28180622;");
+        public static MySqlConnection conexao = new MySqlConnection("Server=localhost;Database=cadastro_produtos;Uid=root;Pwd=123456;");
 
         public static void Conectar()
         {

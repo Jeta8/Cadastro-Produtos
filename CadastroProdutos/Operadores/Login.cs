@@ -33,6 +33,8 @@ namespace CadastroProdutos
                 MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
                 cmd.Parameters.AddWithValue("@login", login);
                 cmd.Parameters.AddWithValue("@senha", senha);
+
+                // TODO: Sem tratamento de erro
                 MySqlDataReader rdr = cmd.ExecuteReader();
 
                 // Se o usuario existe

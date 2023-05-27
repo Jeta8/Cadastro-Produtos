@@ -37,7 +37,10 @@ namespace CadastroProdutos
                     string sql = "SELECT * FROM produtos_cadastrados WHERE codigo_barras = '" + codigoBarras + "'";
 
                     MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+
+                    // TODO: Sem tratamento de erro
                     MySqlDataReader rdr = cmd.ExecuteReader();
+
                     Mercado produto = null;
                     if (rdr.Read())
                     {
@@ -128,7 +131,10 @@ namespace CadastroProdutos
 
                 Console.WriteLine("Método de pagamento: Cartão (C) ou Dinheiro (D)?");
                 string metodoPagamento = Console.ReadLine();
-                while (metodoPagamento != "C" || metodoPagamento != "D")
+
+                // Esse while está errado, um ou outro sempre vai ser verdadeiro e a venda nunca será finalizada
+                // Correção feita.
+                while (metodoPagamento != "C" && metodoPagamento != "D")
                 {
                     Console.WriteLine("O método de pagamento não pode ser vazio");
                     Console.WriteLine("Método de pagamento: Cartão (C) ou Dinheiro (D)?");
@@ -162,6 +168,8 @@ namespace CadastroProdutos
 
 
                     // Calcula o troco
+
+                    // TODO : Cálculo do troco errado, não está considerando a quantidade
                     decimal valorTotal = produtosParaVenda.Sum(p => p.PrecoProduto);
                     troco = valorPago - valorTotal;
 
@@ -181,12 +189,19 @@ namespace CadastroProdutos
                 }
 
                 // Verifica a confirmação, para atualizar o estoque no banco de dados, salvando a venda e mostrando cada item que foi vendido e o metodo de pagamento, alem de gerar uma ID unica de venda, salvar tambem os IDs de cada item vendido
+                
+                // TODO: Não está atualizando o estoque
                 if (confirmacao.ToUpper() == "S")
                 {
                     cConexao.Conectar();
                     string sql = "INSERT INTO vendas (valor_total, metodo_pagamento, valor_pago, troco) VALUES ('" + total + "', '" + metodoPagamento + "', '" + valorPago + "', '" + troco + "')";
+                    
+                   
                     MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+
+                    // TODO: Sem tratamento de erro
                     cmd.ExecuteNonQuery();
+
                     cConexao.Desconectar();
                     // valor_total decimal(10,2) NOT NULL, metodo_pagamento varchar(255) NOT NULL, valor_pago decimal(10,2) NOT NULL, troco decimal(10,2) NOT NULL, PRIMARY KEY (id_venda)
 
@@ -195,6 +210,7 @@ namespace CadastroProdutos
                     cmd = new MySqlCommand(sql, cConexao.conexao);
                     MySqlDataReader rdr = cmd.ExecuteReader();
                     int idVenda = 0;
+
                     if (rdr.Read())
                     {
                         idVenda = int.Parse(rdr["id_venda"].ToString());
@@ -202,14 +218,24 @@ namespace CadastroProdutos
                         cConexao.Desconectar();
                     }
 
+                    // Abrindo uma conexão para cada item da venda, sem necessidade.
+                    cConexao.Conectar();
+
+
                     foreach (var produto in produtosParaVenda)
                     {
-                        cConexao.Conectar();
+                        // query vulnerável a sqli
                         sql = "INSERT INTO itens_vendidos (id_venda, nome_produto, codigo_barras, preco_produto, quantidade) VALUES ('" + idVenda + "', '" + produto.NomeProduto + "', '" + produto.CodigoBarras + "', '" + produto.PrecoProduto + "', '" + quantidade + "')";
                         cmd = new MySqlCommand(sql, cConexao.conexao);
+
+
+                        // TODO: Sem tratamento de erro
                         cmd.ExecuteNonQuery();
-                        cConexao.Desconectar();
                     }
+
+                    // Retirado de dentro do foreach
+                    cConexao.Desconectar();
+
                     // id_venda int(11) NOT NULL AUTO_INCREMENT, nome_produto varchar(255) NOT NULL, codigo_barras varchar(255) NOT NULL, preco_produto decimal(10,2) NOT NULL, quantidade int(11) NOT NULL, PRIMARY KEY (id_venda)
 
                     Console.WriteLine("Venda realizada com sucesso!");

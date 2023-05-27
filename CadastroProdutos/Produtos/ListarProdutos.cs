@@ -20,7 +20,10 @@ namespace CadastroProdutos
                 cConexao.Conectar();
                 string sql = "SELECT * FROM produtos_cadastrados";
                 MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+
+                // TODO: Sem tratamento de erro
                 MySqlDataReader rdr = cmd.ExecuteReader();
+
                 if (rdr.HasRows)
                 {
                     while (rdr.Read())

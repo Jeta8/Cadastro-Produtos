@@ -1,0 +1,10 @@
+Observações da atividade semana 03:
+
+Deixei as alterações no código e comentários
+
+ - Comentários marcados como TODO (A fazer) devem ser implementados.
+ - Mais atenção nos requisitos de validação das atividades, um dos requisitos da semana 03
+ é que as vendas devem conter o operador que realizou a venda, além da data e hora.
+
+ - Ainda faltam validações por erros de entrada do usuário, como caractéres aonde deveria ser número etc...
+ - Anexar os scripts de criação utilizados na próxima entrega.

@@ -103,6 +103,8 @@ namespace CadastroProdutos
                 try
                 {
                     cConexao.Conectar();
+
+                    // TODO: Query vulnerável a sqli
                     string sql = "INSERT INTO operadores (login, senha, nome_operador, nivel_acesso) VALUES ('" + login + "', '" + senha + "', '" + nomeOperador + "', '" + nivelAcesso + "')";
                     MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
                     cmd.ExecuteNonQuery();
@@ -209,6 +211,8 @@ namespace CadastroProdutos
 
                 Console.Write("Novo Nome do Operador: ");
                 string novoNomeOperador = Console.ReadLine();
+
+                // TODO: Só verifica se é vazio, não verifica se existe um login duplicado no banco
                 while (novoNomeOperador == "")
                 {
                     Console.WriteLine("O nome do operador não pode ser vazio");
@@ -263,8 +267,12 @@ namespace CadastroProdutos
                 try
                 {
                     cConexao.Conectar();
+
+                    // TODO: Query vulnerável a sqli
                     string sql = "UPDATE operadores SET login = '" + operador.loginTemp + "', senha = '" + operador.Senha + "', nome_operador = '" + operador.NomeOperador + "', nivel_acesso = '" + (int)operador.NivelAcesso + "' WHERE login = '" + operador.Login + "'";
                     MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+
+                    // TODO: Sem tratamento de erro
                     cmd.ExecuteNonQuery();
                     cConexao.Desconectar();
                 }
@@ -279,6 +287,8 @@ namespace CadastroProdutos
                     cConexao.Desconectar();
                 }
 
+
+                // TODO : Quando edita um operador com sucesso, se o operador for o mesmo editado continua logado com o login anterior
             }
 
             public static void ListarOperadores()
