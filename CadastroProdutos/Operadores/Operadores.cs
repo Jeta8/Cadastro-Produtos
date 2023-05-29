@@ -17,94 +17,104 @@ namespace CadastroProdutos
 
                 Console.WriteLine("Cadastrar Operador");
 
-
-                Console.Write("Login: ");
-                string login = Console.ReadLine();
-                while (login == "")
+                string login, senha, nomeOperador, nivelAcesso;
+                while (true)
                 {
-                    Console.WriteLine("O login não pode ser vazio");
                     Console.Write("Login: ");
-                    login = Console.ReadLine();
-                }
-                try
-                {
-                    cConexao.Conectar();
-                    string sql = "SELECT * FROM operadores WHERE login = '" + login + "'";
-                    MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
-                    MySqlDataReader rdr = cmd.ExecuteReader();
-                    if (rdr.HasRows)
+                    login = Console.ReadLine().Trim();
+                    if (string.IsNullOrEmpty(login))
                     {
-                        Console.WriteLine("Já existe um operador cadastrado com esse login");
+                        Console.WriteLine("O login não pode ser vazio");
+                        continue;
+                    }
+
+                    try
+                    {
+                        cConexao.Conectar();
+                        string sql = "SELECT COUNT(*) FROM operadores WHERE login = @login";
+                        MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+                        cmd.Parameters.AddWithValue("@login", login);
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+                        if (count > 0)
+                        {
+                            Console.WriteLine("Já existe um operador cadastrado com esse login");
+                            Console.ReadKey();
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Erro ao cadastrar operador: " + ex.Message);
                         Console.ReadKey();
                         return;
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Erro ao cadastrar operador: " + ex.Message);
-                    Console.ReadKey();
-                    return;
-                }
-                finally
-                {
-                    cConexao.Desconectar();
+                    finally
+                    {
+                        cConexao.Desconectar();
+                    }
+
+                    break;
                 }
 
-
-
-                Console.Write("Senha: ");
-                string senha = Console.ReadLine();
-                while (senha == "")
+                while (true)
                 {
-                    Console.WriteLine("A senha não pode ser vazia");
                     Console.Write("Senha: ");
                     senha = Console.ReadLine();
+                    if (string.IsNullOrEmpty(senha))
+                    {
+                        Console.WriteLine("A senha não pode ser vazia");
+                        continue;
+                    }
+                    break;
                 }
 
-                Console.Write("Nome do Operador: ");
-                string nomeOperador = Console.ReadLine();
-                while (nomeOperador == "")
+                while (true)
                 {
-                    Console.WriteLine("O nome do operador não pode ser vazio");
                     Console.Write("Nome do Operador: ");
-                    nomeOperador = Console.ReadLine();
+                    nomeOperador = Console.ReadLine().Trim();
+                    if (string.IsNullOrEmpty(nomeOperador))
+                    {
+                        Console.WriteLine("O nome do operador não pode ser vazio");
+                        continue;
+                    }
+                    break;
                 }
 
-                Console.Write("Nível de Acesso (1 - Operador  ||  2 - Administrador): ");
-                string nivelAcesso = Console.ReadLine();
-                while (nivelAcesso == "")
+                while (true)
                 {
-                    Console.WriteLine("O nível de acesso não pode ser vazio");
-                    Console.Write("Nível de Acesso (1 - Operador  ||  2 - Administrador): ");
+                    Console.Write("Nível de Acesso (1 - Operador || 2 - Administrador): ");
                     nivelAcesso = Console.ReadLine();
-                }
-
-                NiveisAcesso nivelAcessoEnum = NiveisAcesso.Nenhum;
-                switch (nivelAcesso)
-                {
-                    case "1":
-                        nivelAcessoEnum = NiveisAcesso.Operador;
-                        break;
-                    case "2":
-                        nivelAcessoEnum = NiveisAcesso.Administrador;
-                        break;
-                    default:
+                    if (string.IsNullOrEmpty(nivelAcesso))
+                    {
+                        Console.WriteLine("O nível de acesso não pode ser vazio");
+                        continue;
+                    }
+                    if (nivelAcesso != "1" && nivelAcesso != "2")
+                    {
                         Console.WriteLine("Nível de acesso inválido!");
-                        Console.ReadKey();
-                        return;
+                        continue;
+                    }
+                    break;
                 }
 
-                Operadores operador = new Operadores();
-                operador.Login = login;
-                operador.Senha = senha;
-                operador.NomeOperador = nomeOperador;
-                operador.NivelAcesso = nivelAcessoEnum;
+                NiveisAcesso nivelAcessoEnum = nivelAcesso == "1" ? NiveisAcesso.Operador : NiveisAcesso.Administrador;
+                Operadores operador = new Operadores
+                {
+                    Login = login,
+                    Senha = senha,
+                    NomeOperador = nomeOperador,
+                    NivelAcesso = nivelAcessoEnum
+                };
 
                 try
                 {
                     cConexao.Conectar();
-                    string sql = "INSERT INTO operadores (login, senha, nome_operador, nivel_acesso) VALUES ('" + login + "', '" + senha + "', '" + nomeOperador + "', '" + nivelAcesso + "')";
+                    string sql = "INSERT INTO operadores (login, senha, nome_operador, nivel_acesso) VALUES (@login, @senha, @nomeOperador, @nivelAcesso)";
                     MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+                    cmd.Parameters.AddWithValue("@login", login);
+                    cmd.Parameters.AddWithValue("@senha", senha);
+                    cmd.Parameters.AddWithValue("@nomeOperador", nomeOperador);
+                    cmd.Parameters.AddWithValue("@nivelAcesso", nivelAcesso);
                     cmd.ExecuteNonQuery();
                     cConexao.Desconectar();
                 }
@@ -115,18 +125,18 @@ namespace CadastroProdutos
                     return;
                 }
 
-
-
                 if (operador.NivelAcesso != NiveisAcesso.Administrador)
                 {
                     Console.WriteLine("Operador cadastrado com sucesso!");
                 }
-                else { Console.WriteLine("Administrador cadastrado com sucesso!"); }
+                else
+                {
+                    Console.WriteLine("Administrador cadastrado com sucesso!");
+                }
 
                 Console.ReadKey();
                 Console.Clear();
             }
-
             public static void AdmOperador()
             {
                 Console.Clear();
@@ -157,9 +167,15 @@ namespace CadastroProdutos
                         operador.NomeOperador = rdr["nome_operador"].ToString();
                         operador.NivelAcesso = (NiveisAcesso)int.Parse(rdr["nivel_acesso"].ToString());
                         rdr.Close();
-                        cConexao.Desconectar();
                     }
-
+                    else
+                    {
+                        rdr.Close();
+                        cConexao.Desconectar();
+                        Console.WriteLine("Operador não encontrado!");
+                        Console.ReadKey();
+                        return;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -172,15 +188,6 @@ namespace CadastroProdutos
                     cConexao.Desconectar();
                 }
 
-
-
-                if (operador == null)
-                {
-                    Console.WriteLine("Operador não encontrado!");
-                    Console.ReadKey();
-                    return;
-                }
-
                 Console.WriteLine("Informações Atuais:");
                 Console.WriteLine("Login: " + operador.Login);
                 Console.WriteLine("Senha: " + operador.Senha);
@@ -191,39 +198,73 @@ namespace CadastroProdutos
 
                 Console.Write("Novo login: ");
                 string novoLogin = Console.ReadLine();
-                while (novoLogin == "")
+                if (!string.IsNullOrEmpty(novoLogin))
                 {
-                    Console.WriteLine("O login não pode ser vazio");
-                    Console.Write("Novo login: ");
-                    novoLogin = Console.ReadLine();
+                    // Verificar se o novo login já existe no banco de dados
+                    try
+                    {
+                        cConexao.Conectar();
+                        string sql = "SELECT * FROM operadores WHERE login = '" + novoLogin + "'";
+                        MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+                        MySqlDataReader rdr = cmd.ExecuteReader();
+                        if (rdr.Read())
+                        {
+                            rdr.Close();
+                            cConexao.Desconectar();
+                            Console.WriteLine("Já existe um operador cadastrado com esse login");
+                            Console.ReadKey();
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Erro ao verificar login: " + ex.Message);
+                        Console.ReadKey();
+                        return;
+                    }
+                    finally
+                    {
+                        cConexao.Desconectar();
+                    }
                 }
 
                 Console.Write("Nova Senha: ");
                 string novaSenha = Console.ReadLine();
-                while (novaSenha == "")
-                {
-                    Console.WriteLine("A senha não pode ser vazia");
-                    Console.Write("Nova Senha: ");
-                    novaSenha = Console.ReadLine();
-                }
 
                 Console.Write("Novo Nome do Operador: ");
                 string novoNomeOperador = Console.ReadLine();
-                while (novoNomeOperador == "")
+                if (!string.IsNullOrEmpty(novoNomeOperador))
                 {
-                    Console.WriteLine("O nome do operador não pode ser vazio");
-                    Console.Write("Novo Nome do Operador: ");
-                    novoNomeOperador = Console.ReadLine();
+                    // Verificar se o novo nome do operador já existe no banco de dados
+                    try
+                    {
+                        cConexao.Conectar();
+                        string sql = "SELECT * FROM operadores WHERE nome_operador = '" + novoNomeOperador + "'";
+                        MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+                        MySqlDataReader rdr = cmd.ExecuteReader();
+                        if (rdr.Read())
+                        {
+                            rdr.Close();
+                            cConexao.Desconectar();
+                            Console.WriteLine("Já existe um operador cadastrado com esse nome");
+                            Console.ReadKey();
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Erro ao verificar nome do operador: " + ex.Message);
+                        Console.ReadKey();
+                        return;
+                    }
+                    finally
+                    {
+                        cConexao.Desconectar();
+                    }
                 }
 
                 Console.Write("Novo Nível de Acesso (1 - Operador || 2 - Administrador): ");
                 string novoNivelAcesso = Console.ReadLine();
-                while (novoNivelAcesso == "")
-                {
-                    Console.WriteLine("O nível de acesso não pode ser vazio");
-                    Console.Write("Novo Nível de Acesso (1 - Operador || 2 - Administrador): ");
-                    novoNivelAcesso = Console.ReadLine();
-                }
 
                 if (!string.IsNullOrEmpty(novaSenha))
                 {
@@ -232,7 +273,7 @@ namespace CadastroProdutos
 
                 if (!string.IsNullOrEmpty(novoLogin))
                 {
-                    operador.loginTemp = novoLogin;
+                    operador.Login = novoLogin;
                 }
 
                 if (!string.IsNullOrEmpty(novoNomeOperador))
@@ -263,7 +304,7 @@ namespace CadastroProdutos
                 try
                 {
                     cConexao.Conectar();
-                    string sql = "UPDATE operadores SET login = '" + operador.loginTemp + "', senha = '" + operador.Senha + "', nome_operador = '" + operador.NomeOperador + "', nivel_acesso = '" + (int)operador.NivelAcesso + "' WHERE login = '" + operador.Login + "'";
+                    string sql = "UPDATE operadores SET login = '" + operador.Login + "', senha = '" + operador.Senha + "', nome_operador = '" + operador.NomeOperador + "', nivel_acesso = '" + (int)operador.NivelAcesso + "' WHERE login = '" + loginOperador + "'";
                     MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
                     cmd.ExecuteNonQuery();
                     cConexao.Desconectar();
@@ -279,7 +320,19 @@ namespace CadastroProdutos
                     cConexao.Desconectar();
                 }
 
+                if (loginOperador == operador.Login)
+                {
+                    Console.WriteLine("Operador editado com sucesso! Continua logado com o login anterior.");
+                }
+                else
+                {
+                    Console.WriteLine("Operador editado com sucesso!");
+                }
+
+                Console.ReadKey();
+                Console.Clear();
             }
+
 
             public static void ListarOperadores()
             {

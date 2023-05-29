@@ -13,15 +13,13 @@ namespace CadastroProdutos
         {
             public static void VenderProduto()
             {
-                // Limpa a tela
                 Console.Clear();
                 List<Mercado> produtosParaVenda = new List<Mercado>();
-                // Mostra o título
+
                 string quantidade = "";
                 Console.WriteLine("Vender Produto");
                 while (true)
                 {
-                    // Pede o código de barras
                     Console.Write("Código de Barras: ");
                     string codigoBarras = Console.ReadLine();
                     while (codigoBarras == "")
@@ -41,7 +39,6 @@ namespace CadastroProdutos
                     Mercado produto = null;
                     if (rdr.Read())
                     {
-                        // Se existir, armazena o produto
                         produto = new Mercado();
                         produto.NomeProduto = rdr["nome_produto"].ToString();
                         produto.CodigoBarras = rdr["codigo_barras"].ToString();
@@ -50,7 +47,6 @@ namespace CadastroProdutos
                         rdr.Close();
                         cConexao.Desconectar();
                     }
-                    // Verifica se o produto foi encontrado
                     if (produto == null)
                     {
                         Console.WriteLine("Produto não encontrado!");
@@ -76,7 +72,7 @@ namespace CadastroProdutos
                             quantidade = Console.ReadLine();
                         }
                     }
-                   
+
 
 
                     // Verifica se a quantidade é válida no banco de dados
@@ -88,7 +84,6 @@ namespace CadastroProdutos
                     }
                     produtosParaVenda.Add(produto);
 
-                    // coloque em uma lista todos os produtos que o usuario colocou para vender e pergunte se deseja finalizar a compra
                     Console.WriteLine("Produto: " + produto.NomeProduto);
                     Console.WriteLine("Quantidade: " + quantidade);
                     Console.WriteLine("Preço: R$" + produto.PrecoProduto);
@@ -116,7 +111,6 @@ namespace CadastroProdutos
                     Console.WriteLine();
                 }
 
-                // Calcula o total de todos os produtos colocados para vender no loop anterior
                 decimal total = 0;
                 foreach (var produto in produtosParaVenda)
                 {
@@ -143,8 +137,8 @@ namespace CadastroProdutos
                     // Pergunta o valor pago em dinheiro
                     Console.Write("Valor pago em dinheiro: R$");
                     valorPago = decimal.Parse(Console.ReadLine());
-                  
-                    foreach(char c in valorPago.ToString())
+
+                    foreach (char c in valorPago.ToString())
                     {
                         if (!char.IsNumber(c))
                         {
@@ -180,45 +174,91 @@ namespace CadastroProdutos
                     confirmacao = Console.ReadLine();
                 }
 
-                // Verifica a confirmação, para atualizar o estoque no banco de dados, salvando a venda e mostrando cada item que foi vendido e o metodo de pagamento, alem de gerar uma ID unica de venda, salvar tambem os IDs de cada item vendido
                 if (confirmacao.ToUpper() == "S")
                 {
                     cConexao.Conectar();
-                    string sql = "INSERT INTO vendas (valor_total, metodo_pagamento, valor_pago, troco) VALUES ('" + total + "', '" + metodoPagamento + "', '" + valorPago + "', '" + troco + "')";
-                    MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
-                    cmd.ExecuteNonQuery();
-                    cConexao.Desconectar();
-                    // valor_total decimal(10,2) NOT NULL, metodo_pagamento varchar(255) NOT NULL, valor_pago decimal(10,2) NOT NULL, troco decimal(10,2) NOT NULL, PRIMARY KEY (id_venda)
 
-                    cConexao.Conectar();
-                    sql = "SELECT * FROM vendas ORDER BY id_venda DESC LIMIT 1";
-                    cmd = new MySqlCommand(sql, cConexao.conexao);
+                    string sql = "INSERT INTO vendas (valor_total, metodo_pagamento, valor_pago, troco, operador, data_hora) VALUES (@valor_total, @metodo_pagamento, @valor_pago, @troco, @operador, @data_hora)";
+                    MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
                     MySqlDataReader rdr = cmd.ExecuteReader();
+                    cmd.Parameters.AddWithValue("@valor_total", produtosParaVenda.Sum(p => p.PrecoProduto));
+                    cmd.Parameters.AddWithValue("@metodo_pagamento", metodoPagamento);
+                    cmd.Parameters.AddWithValue("@valor_pago", valorPago);
+                    cmd.Parameters.AddWithValue("@troco", troco);
+                    cmd.Parameters.AddWithValue("@operador", "Nome do Operador"); // Substitua pelo nome do operador responsável pela venda
+                    cmd.Parameters.AddWithValue("@data_hora", DateTime.Now);
+                    cmd.ExecuteNonQuery();
+
                     int idVenda = 0;
                     if (rdr.Read())
                     {
                         idVenda = int.Parse(rdr["id_venda"].ToString());
-                        rdr.Close();
-                        cConexao.Desconectar();
+                    }
+                    rdr.Close();
+
+                    foreach (var produto in produtosParaVenda)
+                    {
+                        sql = "INSERT INTO itens_venda (id_venda, id_produto, quantidade) VALUES (@id_venda, @id_produto, @quantidade)";
+                        
+                        cmd.Parameters.AddWithValue("@id_venda", idVenda);
+                        cmd.Parameters.AddWithValue("@id_produto", produto.CodigoBarras);
+                        cmd.Parameters.AddWithValue("@quantidade", quantidade);
+                        cmd.ExecuteNonQuery();
                     }
 
                     foreach (var produto in produtosParaVenda)
                     {
-                        cConexao.Conectar();
-                        sql = "INSERT INTO itens_vendidos (id_venda, nome_produto, codigo_barras, preco_produto, quantidade) VALUES ('" + idVenda + "', '" + produto.NomeProduto + "', '" + produto.CodigoBarras + "', '" + produto.PrecoProduto + "', '" + quantidade + "')";
-                        cmd = new MySqlCommand(sql, cConexao.conexao);
+                        sql = "UPDATE produtos_cadastrados SET estoque_produto = estoque_produto - @quantidade WHERE codigo_barras = @codigo_barras";
+                        cmd.Parameters.AddWithValue("@quantidade", quantidade);
+                        cmd.Parameters.AddWithValue("@codigo_barras", produto.CodigoBarras);
                         cmd.ExecuteNonQuery();
-                        cConexao.Desconectar();
                     }
-                    // id_venda int(11) NOT NULL AUTO_INCREMENT, nome_produto varchar(255) NOT NULL, codigo_barras varchar(255) NOT NULL, preco_produto decimal(10,2) NOT NULL, quantidade int(11) NOT NULL, PRIMARY KEY (id_venda)
+
+                    cConexao.Desconectar();
 
                     Console.WriteLine("Venda realizada com sucesso!");
                     Console.ReadKey();
                     Console.Clear();
                     cMenuPrincipal.MenuPrincipal();
-
                 }
+                else
+                {
+                    Console.WriteLine("Venda cancelada!");
+                    Console.ReadKey();
+                    Console.Clear();
+                    cMenuPrincipal.MenuPrincipal();
+                }
+
+
             }
+
+            public static void ListarVendas()
+            {
+                Console.Clear();
+                Console.WriteLine("Listar Vendas");
+                Console.WriteLine();
+                cConexao.Conectar();
+                string sql = "SELECT * FROM vendas";
+                MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    Console.WriteLine("ID: " + rdr["id_venda"].ToString());
+                    Console.WriteLine("Valor Total: " + rdr["valor_total"].ToString());
+                    Console.WriteLine("Método de Pagamento: " + rdr["metodo_pagamento"].ToString());
+                    Console.WriteLine("Valor Pago: " + rdr["valor_pago"].ToString());
+                    Console.WriteLine("Troco: " + rdr["troco"].ToString());
+                    Console.WriteLine("Operador: " + rdr["operador"].ToString());
+                    Console.WriteLine("Data e Hora: " + rdr["data_hora"].ToString());
+                    Console.WriteLine();
+                }
+                rdr.Close();
+                cConexao.Desconectar();
+                Console.ReadKey();
+                Console.Clear();
+                cMenuPrincipal.MenuPrincipal();
+            }
+
         }
     }
 }
