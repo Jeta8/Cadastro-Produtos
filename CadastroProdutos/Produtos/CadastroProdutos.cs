@@ -19,24 +19,21 @@ namespace CadastroProdutos
 
                 Console.Write("Nome do Produto: ");
                 string nomeProduto = Console.ReadLine();
-                while (nomeProduto == "")
+                while (string.IsNullOrEmpty(nomeProduto))
                 {
                     Console.WriteLine("O nome do produto não pode ser vazio");
                     Console.Write("Nome do Produto: ");
                     nomeProduto = Console.ReadLine();
                 }
-                
-
 
                 Console.Write("Código de Barras: ");
                 string codigoBarras = Console.ReadLine();
-                while (codigoBarras == "")
+                while (string.IsNullOrEmpty(codigoBarras))
                 {
                     Console.WriteLine("O código de barras não pode ser vazio");
                     Console.Write("Código de Barras: ");
                     codigoBarras = Console.ReadLine();
                 }
-
 
                 cConexao.Conectar();
                 string sql = "SELECT * FROM produtos_cadastrados WHERE codigo_barras = '" + codigoBarras + "'";
@@ -45,13 +42,13 @@ namespace CadastroProdutos
                 if (rdr.HasRows)
                 {
                     Console.WriteLine("Já existe um produto cadastrado com esse código de barras");
-                    Console.WriteLine("Deseja cadastrar o produto mas com outro codigo de barras? (S/N)");
+                    Console.WriteLine("Deseja cadastrar o produto com outro código de barras? (S/N)");
                     string opcao1 = Console.ReadLine();
                     if (opcao1.ToUpper() == "S")
                     {
                         Console.Write("Código de Barras: ");
                         codigoBarras = Console.ReadLine();
-                        while (codigoBarras == "")
+                        while (string.IsNullOrEmpty(codigoBarras))
                         {
                             Console.WriteLine("O código de barras não pode ser vazio");
                             Console.Write("Código de Barras: ");
@@ -65,10 +62,11 @@ namespace CadastroProdutos
                         return;
                     }
                 }
+                rdr.Close();
 
                 Console.Write("Preço do Produto: ");
                 string precoProduto = Console.ReadLine();
-                while (precoProduto == "")
+                while (string.IsNullOrEmpty(precoProduto))
                 {
                     Console.WriteLine("O preço do produto não pode ser vazio");
                     Console.Write("Preço do Produto: ");
@@ -77,7 +75,7 @@ namespace CadastroProdutos
 
                 Console.Write("Estoque do Produto: ");
                 string estoqueProduto = Console.ReadLine();
-                while (estoqueProduto == "")
+                while (string.IsNullOrEmpty(estoqueProduto))
                 {
                     Console.WriteLine("O estoque do produto não pode ser vazio");
                     Console.Write("Estoque do Produto: ");
@@ -93,8 +91,12 @@ namespace CadastroProdutos
                 try
                 {
                     cConexao.Conectar();
-                    sql = "INSERT INTO produtos_cadastrados (nome_produto, codigo_barras, preco_produto, estoque_produto) VALUES ('" + nomeProduto + "', '" + codigoBarras + "', '" + precoProduto + "', '" + estoqueProduto + "')";
+                    sql = "INSERT INTO produtos_cadastrados (nome_produto, codigo_barras, preco_produto, estoque_produto) VALUES (@nomeProduto, @codigoBarras, @precoProduto, @estoqueProduto)";
                     cmd = new MySqlCommand(sql, cConexao.conexao);
+                    cmd.Parameters.AddWithValue("@nomeProduto", nomeProduto);
+                    cmd.Parameters.AddWithValue("@codigoBarras", codigoBarras);
+                    cmd.Parameters.AddWithValue("@precoProduto", precoProduto);
+                    cmd.Parameters.AddWithValue("@estoqueProduto", estoqueProduto);
                     cmd.ExecuteNonQuery();
                     cConexao.Desconectar();
                 }
@@ -104,8 +106,6 @@ namespace CadastroProdutos
                     Console.ReadKey();
                     return;
                 }
-              
-                // nome_produto string, codigo_barras string, preco_produto decimal, estoque_produto int
 
                 Console.WriteLine("Produto cadastrado com sucesso!\n");
                 Console.WriteLine("Nome do Produto: " + nomeProduto);
@@ -124,7 +124,7 @@ namespace CadastroProdutos
                 }
                 else
                 {
-                    Console.WriteLine("Esses foram os produtos cadastrados ate o momento:");
+                    Console.WriteLine("Esses foram os produtos cadastrados até o momento:");
                     ListarProdutos.cListarProdutos.ListarProdutos();
                     Console.ReadKey();
                     Console.Clear();
