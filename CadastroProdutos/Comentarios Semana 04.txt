@@ -2,6 +2,5 @@ Observações da atividade semana 04:
 
 Os ajustes da semana 03 não foram feitos;
 O nome do operador não está sendo registrado nas vendas;
-Querys para criação do banco de dados não estão incluídas;
 
 ****Data final para última entrega com correções 14/07****
