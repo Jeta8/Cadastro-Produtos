@@ -19,48 +19,36 @@ namespace CadastroProdutos
 
                 Console.Write("Nome do Produto: ");
                 string nomeProduto = Console.ReadLine();
-                while (nomeProduto == "")
+                while (string.IsNullOrEmpty(nomeProduto))
                 {
                     Console.WriteLine("O nome do produto não pode ser vazio");
                     Console.Write("Nome do Produto: ");
                     nomeProduto = Console.ReadLine();
                 }
 
-
-
                 Console.Write("Código de Barras: ");
                 string codigoBarras = Console.ReadLine();
-                while (codigoBarras == "")
+                while (string.IsNullOrEmpty(codigoBarras))
                 {
                     Console.WriteLine("O código de barras não pode ser vazio");
                     Console.Write("Código de Barras: ");
                     codigoBarras = Console.ReadLine();
                 }
 
-
                 cConexao.Conectar();
-
-                // TODO: Query vulnerável a sqli
                 string sql = "SELECT * FROM produtos_cadastrados WHERE codigo_barras = '" + codigoBarras + "'";
-
                 MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
-
-                // TODO: Sem tratamento de erro
                 MySqlDataReader rdr = cmd.ExecuteReader();
-
                 if (rdr.HasRows)
                 {
                     Console.WriteLine("Já existe um produto cadastrado com esse código de barras");
-                    Console.WriteLine("Deseja cadastrar o produto mas com outro codigo de barras? (S/N)");
-
-
-                    // TODO: Se o usuário digitar S e colocar o código de barras já existente novamente o programa continua
+                    Console.WriteLine("Deseja cadastrar o produto com outro código de barras? (S/N)");
                     string opcao1 = Console.ReadLine();
                     if (opcao1.ToUpper() == "S")
                     {
                         Console.Write("Código de Barras: ");
                         codigoBarras = Console.ReadLine();
-                        while (codigoBarras == "")
+                        while (string.IsNullOrEmpty(codigoBarras))
                         {
                             Console.WriteLine("O código de barras não pode ser vazio");
                             Console.Write("Código de Barras: ");
@@ -74,14 +62,11 @@ namespace CadastroProdutos
                         return;
                     }
                 }
-
-                // Bug - ExecuteReader deve ser fechado, é feito automaticamente quando a conexão é fechada
-                // Mas nesse caso, ela continua aberta então na próxima query vai dar erro sem fechar ela
-                rdr.Close(); // Correção
+                rdr.Close();
 
                 Console.Write("Preço do Produto: ");
                 string precoProduto = Console.ReadLine();
-                while (precoProduto == "")
+                while (string.IsNullOrEmpty(precoProduto))
                 {
                     Console.WriteLine("O preço do produto não pode ser vazio");
                     Console.Write("Preço do Produto: ");
@@ -90,7 +75,7 @@ namespace CadastroProdutos
 
                 Console.Write("Estoque do Produto: ");
                 string estoqueProduto = Console.ReadLine();
-                while (estoqueProduto == "")
+                while (string.IsNullOrEmpty(estoqueProduto))
                 {
                     Console.WriteLine("O estoque do produto não pode ser vazio");
                     Console.Write("Estoque do Produto: ");
@@ -100,37 +85,27 @@ namespace CadastroProdutos
                 Mercado produto = new Mercado();
                 produto.NomeProduto = nomeProduto;
                 produto.CodigoBarras = codigoBarras;
-
-                // TODO: Sem tratamento de caractéres indevidos (aqui não é o único local, revisar todos)
                 produto.PrecoProduto = decimal.Parse(precoProduto);
                 produto.EstoqueProduto = int.Parse(estoqueProduto);
 
                 try
                 {
-                    // Bug - Conexão já aberta ali em cima, sendo aberta novamente aqui
-                    // cConexao.Conectar(); // Correção
-
-                    // TODO: Query vulnerável a sqli
-                    sql = "INSERT INTO produtos_cadastrados (nome_produto, codigo_barras, preco_produto, estoque_produto) VALUES ('" + nomeProduto + "', '" + codigoBarras + "', '" + precoProduto + "', '" + estoqueProduto + "')";
-
+                    cConexao.Conectar();
+                    sql = "INSERT INTO produtos_cadastrados (nome_produto, codigo_barras, preco_produto, estoque_produto) VALUES (@nomeProduto, @codigoBarras, @precoProduto, @estoqueProduto)";
                     cmd = new MySqlCommand(sql, cConexao.conexao);
+                    cmd.Parameters.AddWithValue("@nomeProduto", nomeProduto);
+                    cmd.Parameters.AddWithValue("@codigoBarras", codigoBarras);
+                    cmd.Parameters.AddWithValue("@precoProduto", precoProduto);
+                    cmd.Parameters.AddWithValue("@estoqueProduto", estoqueProduto);
                     cmd.ExecuteNonQuery();
-
-                    // Se der erro na query, o código vai direto para o catch e não fecha a conexão com o banco de addos
                     cConexao.Desconectar();
                 }
                 catch (Exception ex)
                 {
-                    // Correção para fechar a conexão em caso de erro 
-                    if (cConexao.conexao.State == System.Data.ConnectionState.Open)
-                        cConexao.Desconectar();
-
                     Console.WriteLine("Erro ao cadastrar produto: " + ex.Message);
                     Console.ReadKey();
                     return;
                 }
-
-                // nome_produto string, codigo_barras string, preco_produto decimal, estoque_produto int
 
                 Console.WriteLine("Produto cadastrado com sucesso!\n");
                 Console.WriteLine("Nome do Produto: " + nomeProduto);
@@ -149,7 +124,7 @@ namespace CadastroProdutos
                 }
                 else
                 {
-                    Console.WriteLine("Esses foram os produtos cadastrados ate o momento:");
+                    Console.WriteLine("Esses foram os produtos cadastrados até o momento:");
                     ListarProdutos.cListarProdutos.ListarProdutos();
                     Console.ReadKey();
                     Console.Clear();

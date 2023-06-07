@@ -27,7 +27,6 @@ namespace CadastroProdutos
                 Console.Write("Senha: ");
                 string senha = Console.ReadLine();
 
-                // Verifica se o usuario existe no banco de dados e protege de sql injection
                 cConexao.Conectar();
                 string sql = "SELECT * FROM operadores WHERE login = @login AND senha = @senha";
                 MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
@@ -79,10 +78,7 @@ namespace CadastroProdutos
                     return;
                    
                 }
-
                 
-
-              
             }
 
             public static void Logout()

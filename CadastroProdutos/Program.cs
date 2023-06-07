@@ -97,7 +97,8 @@ namespace CadastroProdutos
                 Console.WriteLine("4 - Listar Produtos");
                 Console.WriteLine("5 - Vender Produto");
                 Console.WriteLine("6 - Listar Operadores");
-                Console.WriteLine("7 - Sair");
+                Console.WriteLine("7 - Listar Vendas");
+                Console.WriteLine("8 - Sair");
             }
             else
             {
@@ -132,8 +133,11 @@ namespace CadastroProdutos
                     case "6":
                         OperadoresControl.cCadastrarOperador.ListarOperadores();
                         break;
-
                     case "7":
+                        VenderProduto.cVenderProduto.ListarVendas();
+                        break;
+
+                    case "8":
                         Login.cLogin.Logout();
                         break;
 

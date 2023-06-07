@@ -1,0 +1,40 @@
+// Operadores
+CREATE TABLE operadores (
+  login VARCHAR(50) PRIMARY KEY,
+  senha VARCHAR(50) NOT NULL,
+  nome_operador VARCHAR(50) NOT NULL,
+  nivel_acesso INT NOT NULL
+);
+
+
+
+// Cadastro de Produtos
+CREATE TABLE produtos_cadastrados (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome_produto VARCHAR(50) NOT NULL,
+  codigo_barras VARCHAR(50) NOT NULL,
+  preco_produto DECIMAL(10, 2) NOT NULL,
+  estoque_produto INT NOT NULL
+);
+
+
+
+
+// Vendas 
+CREATE TABLE IF NOT EXISTS vendas (
+  id_venda INT AUTO_INCREMENT PRIMARY KEY,
+  valor_total DECIMAL(10, 2) NOT NULL,
+  metodo_pagamento VARCHAR(10) NOT NULL,
+  valor_pago DECIMAL(10, 2),
+  troco DECIMAL(10, 2),
+  operador VARCHAR(50),
+  data_hora DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS itens_venda (
+  id_item INT AUTO_INCREMENT PRIMARY KEY,
+  id_venda INT NOT NULL,
+  id_produto VARCHAR(50) NOT NULL,
+  quantidade INT,
+  FOREIGN KEY (id_venda) REFERENCES vendas(id_venda)
+);
