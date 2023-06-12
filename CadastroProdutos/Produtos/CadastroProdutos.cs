@@ -19,7 +19,7 @@ namespace CadastroProdutos
 
                 Console.Write("Nome do Produto: ");
                 string nomeProduto = Console.ReadLine();
-                while (string.IsNullOrEmpty(nomeProduto))
+                while (string.IsNullOrEmpty(nomeProduto) || !nomeProduto.All(char.IsLetterOrDigit))
                 {
                     Console.WriteLine("O nome do produto não pode ser vazio");
                     Console.Write("Nome do Produto: ");
@@ -28,9 +28,9 @@ namespace CadastroProdutos
 
                 Console.Write("Código de Barras: ");
                 string codigoBarras = Console.ReadLine();
-                while (string.IsNullOrEmpty(codigoBarras))
+                while (string.IsNullOrEmpty(codigoBarras) || !codigoBarras.All(char.IsDigit))
                 {
-                    Console.WriteLine("O código de barras não pode ser vazio");
+                    Console.WriteLine("O código de barras não pode ser vazio e deve ser um número inteiro");
                     Console.Write("Código de Barras: ");
                     codigoBarras = Console.ReadLine();
                 }
@@ -48,9 +48,9 @@ namespace CadastroProdutos
                     {
                         Console.Write("Código de Barras: ");
                         codigoBarras = Console.ReadLine();
-                        while (string.IsNullOrEmpty(codigoBarras))
+                        while (string.IsNullOrEmpty(codigoBarras) || !codigoBarras.All(char.IsDigit))
                         {
-                            Console.WriteLine("O código de barras não pode ser vazio");
+                            Console.WriteLine("O código de barras não pode ser vazio e deve ser um número inteiro");
                             Console.Write("Código de Barras: ");
                             codigoBarras = Console.ReadLine();
                         }
@@ -66,7 +66,7 @@ namespace CadastroProdutos
 
                 Console.Write("Preço do Produto: ");
                 string precoProduto = Console.ReadLine();
-                while (string.IsNullOrEmpty(precoProduto))
+                while (string.IsNullOrEmpty(precoProduto) || !precoProduto.All(char.IsDigit))
                 {
                     Console.WriteLine("O preço do produto não pode ser vazio");
                     Console.Write("Preço do Produto: ");
@@ -75,9 +75,9 @@ namespace CadastroProdutos
 
                 Console.Write("Estoque do Produto: ");
                 string estoqueProduto = Console.ReadLine();
-                while (string.IsNullOrEmpty(estoqueProduto))
+                while (string.IsNullOrEmpty(estoqueProduto) || !estoqueProduto.All(char.IsDigit))
                 {
-                    Console.WriteLine("O estoque do produto não pode ser vazio");
+                    Console.WriteLine("O estoque do produto não pode ser vazio e deve ser um número inteiro");
                     Console.Write("Estoque do Produto: ");
                     estoqueProduto = Console.ReadLine();
                 }

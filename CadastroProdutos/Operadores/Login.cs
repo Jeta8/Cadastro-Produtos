@@ -1,9 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CadastroProdutos
 {
@@ -13,70 +9,64 @@ namespace CadastroProdutos
         {
             public static void Login()
             {
-                // Limpa a tela
                 Console.Clear();
 
-                // Mostra o título
                 Console.WriteLine("Login");
 
-                // Pede o login
                 Console.Write("Login: ");
                 string login = Console.ReadLine();
 
-                // Pede a senha
                 Console.Write("Senha: ");
                 string senha = Console.ReadLine();
 
-                cConexao.Conectar();
-                string sql = "SELECT * FROM operadores WHERE login = @login AND senha = @senha";
-                MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
-                cmd.Parameters.AddWithValue("@login", login);
-                cmd.Parameters.AddWithValue("@senha", senha);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-
-                // Se o usuario existe
-                if (rdr.HasRows)
+                try
                 {
-                    // Ler o usuario
-                    rdr.Read();
+                    cConexao.Conectar();
+                    string sql = "SELECT * FROM operadores WHERE login = @login AND senha = @senha";
+                    using (MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao))
+                    {
+                        cmd.Parameters.AddWithValue("@login", login);
+                        cmd.Parameters.AddWithValue("@senha", senha);
+                        using (MySqlDataReader rdr = cmd.ExecuteReader())
+                        {
+                            if (rdr.HasRows)
+                            {
+                                rdr.Read();
 
-                    // Cria um objeto do tipo Operadores
-                    Operadores operador = new Operadores();
+                                Operadores operador = new Operadores();
 
-                    // Preenche o objeto com os dados do banco de dados
-                    operador.Login = rdr["login"].ToString();
-                    operador.Senha = rdr["senha"].ToString();
-                    operador.NomeOperador = rdr["nome_operador"].ToString();
-                    operador.NivelAcesso = (NiveisAcesso)Convert.ToInt32(rdr["nivel_acesso"]);
+                                operador.Login = rdr.GetString("login");
+                                operador.Senha = rdr.GetString("senha");
+                                operador.NomeOperador = rdr.GetString("nome_operador");
+                                operador.NivelAcesso = (NiveisAcesso)Convert.ToInt32(rdr["nivel_acesso"]);
 
-                    // Define o operador logado
-                    App.OperadorLogado = operador;
+                                App.OperadorLogado = operador;
 
-                    // Desconecta do banco de dados
-                    cConexao.Desconectar();
+                                Console.Clear();
+                                Console.WriteLine("Login efetuado com sucesso");
+                                Console.ReadKey();
 
-                    // Limpa a tela
-                    Console.Clear();
-
-                    // Mostra uma mensagem de sucesso
-                    Console.WriteLine("Login efetuado com sucesso");
-                    Console.ReadKey();
-
-                    // Chama o menu principal
-                    cMenuPrincipal.MenuPrincipal();
+                                cMenuPrincipal.MenuPrincipal();
+                            }
+                            else
+                            {
+                                Console.WriteLine("Login ou senha incorretos");
+                                Console.ReadKey();
+                                return;
+                            }
+                        }
+                    }
                 }
-                else
+                catch (MySqlException ex)
                 {
-                    // Desconecta do banco de dados
-                    cConexao.Desconectar();
-
-                    // Mostra uma mensagem de erro
-                    Console.WriteLine("Login ou senha incorretos");
+                    Console.WriteLine("Erro ao efetuar o login: " + ex.Message);
                     Console.ReadKey();
                     return;
-                   
                 }
-                
+                finally
+                {
+                    cConexao.Desconectar();
+                }
             }
 
             public static void Logout()
@@ -85,7 +75,7 @@ namespace CadastroProdutos
                 {
                     App.OperadorLogado = null;
                     Console.Clear();
-                    Console.WriteLine("Voce saiu do sistema com sucesso");
+                    Console.WriteLine("Você saiu do sistema com sucesso");
                     Console.ReadKey();
                     Login();
                 }
