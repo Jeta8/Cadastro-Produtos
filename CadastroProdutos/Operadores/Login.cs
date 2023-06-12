@@ -46,7 +46,9 @@ namespace CadastroProdutos
                                 Console.WriteLine("Login efetuado com sucesso");
                                 Console.ReadKey();
 
+                                cConexao.Desconectar();
                                 cMenuPrincipal.MenuPrincipal();
+                               
                             }
                             else
                             {
@@ -56,6 +58,7 @@ namespace CadastroProdutos
                             }
                         }
                     }
+                   
                 }
                 catch (MySqlException ex)
                 {

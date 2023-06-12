@@ -63,6 +63,7 @@ namespace CadastroProdutos
                     }
                 }
                 rdr.Close();
+                cConexao.Desconectar();
 
                 Console.Write("Preço do Produto: ");
                 string precoProduto = Console.ReadLine();
@@ -102,6 +103,7 @@ namespace CadastroProdutos
                 }
                 catch (Exception ex)
                 {
+                    cConexao.Desconectar();
                     Console.WriteLine("Erro ao cadastrar produto: " + ex.Message);
                     Console.ReadKey();
                     return;

@@ -38,12 +38,14 @@ namespace CadastroProdutos
                             else
                             {
                                 Console.WriteLine("Não há produtos cadastrados");
+                                cConexao.Desconectar();
                             }
                         }
                     }
                 }
                 catch (MySqlException ex)
                 {
+                    cConexao.Desconectar();
                     Console.WriteLine("Ocorreu um erro ao listar os produtos: " + ex.Message);
                 }
                 finally

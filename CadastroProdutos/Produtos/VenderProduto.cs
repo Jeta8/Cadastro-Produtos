@@ -53,6 +53,7 @@ namespace CadastroProdutos
                     }
                     catch (MySqlException ex)
                     {
+                        cConexao.Desconectar();
                         Console.WriteLine("Ocorreu um erro ao buscar o produto: " + ex.Message);
                         Console.ReadKey();
                         Console.Clear();
@@ -121,7 +122,7 @@ namespace CadastroProdutos
 
                 Console.WriteLine("Método de pagamento: Cartão (C) ou Dinheiro (D)?");
                 string metodoPagamento = Console.ReadLine();
-                while (metodoPagamento != "C" && metodoPagamento != "D")
+                while (metodoPagamento.ToUpper() != "C" && metodoPagamento.ToUpper() != "D")
                 {
                     Console.WriteLine("O método de pagamento deve ser 'C' para Cartão ou 'D' para Dinheiro");
                     Console.WriteLine("Método de pagamento: Cartão (C) ou Dinheiro (D)?");
@@ -161,7 +162,14 @@ namespace CadastroProdutos
                     Console.WriteLine(" O troco a ser devolvido é de: R$" + troco);
                     Console.ReadKey();
                 }
-
+                if (metodoPagamento.ToUpper() == "D")
+                {
+                    metodoPagamento = "Dinheiro";
+                }
+                else
+                {
+                    metodoPagamento = "Cartao";
+                }
                 string operador = App.OperadorLogado.NomeOperador;
 
                 Console.Write("Confirmar a venda? (S/N): ");
@@ -221,6 +229,7 @@ namespace CadastroProdutos
                         Console.WriteLine("Ocorreu um erro ao realizar a venda: " + ex.Message);
                         Console.ReadKey();
                         Console.Clear();
+                        cConexao.Desconectar();
                         cMenuPrincipal.MenuPrincipal();
 
                     }
@@ -230,6 +239,7 @@ namespace CadastroProdutos
                     Console.WriteLine("Venda cancelada!");
                     Console.ReadKey();
                     Console.Clear();
+                    cConexao.Desconectar();
                     cMenuPrincipal.MenuPrincipal();
                 }
             }
@@ -267,6 +277,7 @@ namespace CadastroProdutos
                     Console.WriteLine("Ocorreu um erro ao listar as vendas: " + ex.Message);
                     Console.ReadKey();
                     Console.Clear();
+                    cConexao.Desconectar();
                     cMenuPrincipal.MenuPrincipal();
 
                 }
