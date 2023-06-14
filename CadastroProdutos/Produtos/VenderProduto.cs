@@ -16,7 +16,7 @@ namespace CadastroProdutos
                 Console.Clear();
                 List<Mercado> produtosParaVenda = new List<Mercado>();
 
-                string quantidade = "";
+                
                 Console.WriteLine("Vender Produto");
                 while (true)
                 {
@@ -27,19 +27,19 @@ namespace CadastroProdutos
                         Console.WriteLine("O código de barras deve ser um número");
                         Console.Write("Código de Barras: ");
                         codigoBarras = Console.ReadLine();
-                    }                 
+                    }
 
                     // Verifica se o produto existe no banco de dados
                     Mercado produto = null;
                     try
-                    {                        
+                    {
                         cConexao.Conectar();
                         string sql = "SELECT * FROM produtos_cadastrados WHERE codigo_barras = @codigoBarras";
 
                         MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
                         cmd.Parameters.AddWithValue("@codigoBarras", codigoBarras);
                         MySqlDataReader rdr = cmd.ExecuteReader();
-                       
+
                         if (rdr.Read())
                         {
                             produto = new Mercado();
@@ -70,16 +70,16 @@ namespace CadastroProdutos
 
                     // Pede a quantidade e permite apenas números
                     Console.Write("Quantidade: ");
-                    quantidade = Console.ReadLine();
-                    while (string.IsNullOrEmpty(quantidade) || !quantidade.All(char.IsDigit))
+                    produto.Quantidade = Console.ReadLine();
+                    while (string.IsNullOrEmpty(produto.Quantidade ) || !produto.Quantidade .All(char.IsDigit))
                     {
                         Console.WriteLine("A quantidade deve ser um número");
                         Console.Write("Quantidade: ");
-                        quantidade = Console.ReadLine();
+                        produto.Quantidade  = Console.ReadLine();
                     }
 
                     // Verifica se a quantidade é válida no banco de dados
-                    int quantidadeVenda = int.Parse(quantidade);
+                    int quantidadeVenda = int.Parse(produto.Quantidade);
                     if (quantidadeVenda > produto.EstoqueProduto)
                     {
                         Console.WriteLine("Quantidade inválida!");
@@ -89,7 +89,7 @@ namespace CadastroProdutos
                     produtosParaVenda.Add(produto);
 
                     Console.WriteLine("Produto: " + produto.NomeProduto);
-                    Console.WriteLine("Quantidade: " + quantidade);
+                    Console.WriteLine("Quantidade: " + produto.Quantidade);
                     Console.WriteLine("Preço: R$" + produto.PrecoProduto);
                     Console.WriteLine("Deseja adicionar mais produtos? (S/N)");
                     string conf = Console.ReadLine();
@@ -110,12 +110,13 @@ namespace CadastroProdutos
                 foreach (var produto in produtosParaVenda)
                 {
                     Console.WriteLine("Produto: " + produto.NomeProduto);
-                    Console.WriteLine("Quantidade: " + quantidade);
+                    Console.WriteLine("Quantidade: " + produto.Quantidade); // Utilize a propriedade "Quantidade" do produto
                     Console.WriteLine("Preço: R$" + produto.PrecoProduto);
                     Console.WriteLine();
                 }
 
-                decimal total = produtosParaVenda.Sum(p => p.PrecoProduto * int.Parse(quantidade));
+
+                decimal total = produtosParaVenda.Sum(p => p.PrecoProduto * int.Parse(p.Quantidade));
 
                 // Mostra o total
                 Console.WriteLine("Total: R$" + total);
@@ -204,7 +205,7 @@ namespace CadastroProdutos
                             cmd.Parameters.Clear();
                             cmd.Parameters.AddWithValue("@id_venda", idVenda);
                             cmd.Parameters.AddWithValue("@id_produto", produto.CodigoBarras);
-                            cmd.Parameters.AddWithValue("@quantidade", quantidade);
+                            cmd.Parameters.AddWithValue("@quantidade", produto.Quantidade);
                             cmd.ExecuteNonQuery();
                         }
 
@@ -212,7 +213,7 @@ namespace CadastroProdutos
                         {
                             sql = "UPDATE produtos_cadastrados SET estoque_produto = estoque_produto - @quantidade WHERE codigo_barras = @codigo_barras";
                             cmd.Parameters.Clear();
-                            cmd.Parameters.AddWithValue("@quantidade", quantidade);
+                            cmd.Parameters.AddWithValue("@quantidade", produto.Quantidade);
                             cmd.Parameters.AddWithValue("@codigo_barras", produto.CodigoBarras);
                             cmd.ExecuteNonQuery();
                         }
