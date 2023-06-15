@@ -15,36 +15,48 @@ namespace CadastroProdutos
             {
                 Console.Clear();
 
-                
-                Console.WriteLine("Listar Produtos");
-                cConexao.Conectar();
-                string sql = "SELECT * FROM produtos_cadastrados";
-                MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
-
-                // TODO: Sem tratamento de erro
-                MySqlDataReader rdr = cmd.ExecuteReader();
-
-                if (rdr.HasRows)
+                try
                 {
-                    while (rdr.Read())
+                    Console.WriteLine("Listar Produtos");
+                    cConexao.Conectar();
+                    string sql = "SELECT * FROM produtos_cadastrados";
+                    using (MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao))
                     {
-                        Console.WriteLine("Nome do Produto: " + rdr["nome_produto"]);
-                        Console.WriteLine("Código de Barras: " + rdr["codigo_barras"]);
-                        Console.WriteLine("Preço do Produto: " + rdr["preco_produto"]);
-                        Console.WriteLine("Estoque do Produto: " + rdr["estoque_produto"]);
-                        Console.WriteLine();
+                        using (MySqlDataReader rdr = cmd.ExecuteReader())
+                        {
+                            if (rdr.HasRows)
+                            {
+                                while (rdr.Read())
+                                {
+                                    Console.WriteLine("Nome do Produto: " + rdr.GetString("nome_produto"));
+                                    Console.WriteLine("Código de Barras: " + rdr.GetString("codigo_barras"));
+                                    Console.WriteLine("Preço do Produto: " + rdr.GetDecimal("preco_produto"));
+                                    Console.WriteLine("Estoque do Produto: " + rdr.GetInt32("estoque_produto"));
+                                    Console.WriteLine();
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Não há produtos cadastrados");
+                                cConexao.Desconectar();
+                            }
+                        }
                     }
                 }
-                else
+                catch (MySqlException ex)
                 {
-                    Console.WriteLine("Não há produtos cadastrados");
+                    cConexao.Desconectar();
+                    Console.WriteLine("Ocorreu um erro ao listar os produtos: " + ex.Message);
                 }
-                cConexao.Desconectar();
-
+                finally
+                {
+                    cConexao.Desconectar();
+                }
 
                 Console.WriteLine("Pressione uma tecla para continuar...");
                 Console.ReadKey();
             }
+
         }
     }
 }

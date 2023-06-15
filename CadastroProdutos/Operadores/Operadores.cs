@@ -44,14 +44,12 @@ namespace CadastroProdutos
                     }
                     catch (Exception ex)
                     {
+                        cConexao.Desconectar();
                         Console.WriteLine("Erro ao cadastrar operador: " + ex.Message);
                         Console.ReadKey();
                         return;
                     }
-                    finally
-                    {
-                        cConexao.Desconectar();
-                    }
+
 
                     break;
                 }
@@ -72,7 +70,7 @@ namespace CadastroProdutos
                 {
                     Console.Write("Nome do Operador: ");
                     nomeOperador = Console.ReadLine().Trim();
-                    if (string.IsNullOrEmpty(nomeOperador))
+                    if (string.IsNullOrEmpty(nomeOperador) || !nomeOperador.All(char.IsLetter))
                     {
                         Console.WriteLine("O nome do operador não pode ser vazio");
                         continue;
@@ -120,6 +118,7 @@ namespace CadastroProdutos
                 }
                 catch (Exception ex)
                 {
+                    cConexao.Desconectar();
                     Console.WriteLine("Erro ao cadastrar operador: " + ex.Message);
                     Console.ReadKey();
                     return;
@@ -167,6 +166,7 @@ namespace CadastroProdutos
                         operador.NomeOperador = rdr["nome_operador"].ToString();
                         operador.NivelAcesso = (NiveisAcesso)int.Parse(rdr["nivel_acesso"].ToString());
                         rdr.Close();
+                        cConexao.Desconectar();
                     }
                     else
                     {
@@ -179,6 +179,7 @@ namespace CadastroProdutos
                 }
                 catch (Exception ex)
                 {
+                    cConexao.Desconectar();
                     Console.WriteLine("Erro ao editar operador: " + ex.Message);
                     Console.ReadKey();
                     return;
@@ -218,6 +219,7 @@ namespace CadastroProdutos
                     }
                     catch (Exception ex)
                     {
+                        cConexao.Desconectar();
                         Console.WriteLine("Erro ao verificar login: " + ex.Message);
                         Console.ReadKey();
                         return;
@@ -253,6 +255,7 @@ namespace CadastroProdutos
                     }
                     catch (Exception ex)
                     {
+                        cConexao.Desconectar();
                         Console.WriteLine("Erro ao verificar nome do operador: " + ex.Message);
                         Console.ReadKey();
                         return;
@@ -311,6 +314,7 @@ namespace CadastroProdutos
                 }
                 catch (Exception ex)
                 {
+                    cConexao.Desconectar();
                     Console.WriteLine("Erro ao editar operador: " + ex.Message);
                     Console.ReadKey();
                     return;
@@ -373,6 +377,7 @@ namespace CadastroProdutos
                 }
                 catch (Exception ex)
                 {
+                    cConexao.Desconectar();
                     Console.WriteLine("Erro ao listar operadores: " + ex.Message);
                     Console.ReadKey();
                     return;

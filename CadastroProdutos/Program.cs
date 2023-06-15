@@ -31,6 +31,7 @@ namespace CadastroProdutos
         public string CodigoBarras = "";
         public decimal PrecoProduto = 0;
         public int EstoqueProduto = 0;
+        public string Quantidade = "";
     }
 
     public class App
