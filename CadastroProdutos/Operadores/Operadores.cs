@@ -30,7 +30,9 @@ namespace CadastroProdutos
 
                     try
                     {
+                        // Aqui a conexão é aberta para verificar o login do operador, mas nunca é fechada.
                         cConexao.Conectar();
+
                         string sql = "SELECT COUNT(*) FROM operadores WHERE login = @login";
                         MySqlCommand cmd = new MySqlCommand(sql, cConexao.conexao);
                         cmd.Parameters.AddWithValue("@login", login);
@@ -41,6 +43,9 @@ namespace CadastroProdutos
                             Console.ReadKey();
                             return;
                         }
+
+                        // Correção:
+                        cConexao.Desconectar();
                     }
                     catch (Exception ex)
                     {

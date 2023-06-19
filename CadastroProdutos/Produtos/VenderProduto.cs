@@ -111,7 +111,11 @@ namespace CadastroProdutos
                 {
                     Console.WriteLine("Produto: " + produto.NomeProduto);
                     Console.WriteLine("Quantidade: " + produto.Quantidade); // Utilize a propriedade "Quantidade" do produto
-                    Console.WriteLine("Preço: R$" + produto.PrecoProduto);
+
+                    // Aqui deveria exibir a quantidade * preco
+                    // Exemplo: 5 produtos de 10 reais cada, está exibindo o valor de 10, e não 50.
+                    // Correção:
+                    Console.WriteLine("Preço: R$" + (produto.PrecoProduto * Convert.ToInt32(produto.Quantidade)));
                     Console.WriteLine();
                 }
 
@@ -202,6 +206,10 @@ namespace CadastroProdutos
                         foreach (var produto in produtosParaVenda)
                         {
                             sql = "INSERT INTO itens_venda (id_venda, id_produto, quantidade) VALUES (@id_venda, @id_produto, @quantidade)";
+
+                            // Correção na falha da query de vendas
+                            cmd = new MySqlCommand(sql, cConexao.conexao);
+
                             cmd.Parameters.Clear();
                             cmd.Parameters.AddWithValue("@id_venda", idVenda);
                             cmd.Parameters.AddWithValue("@id_produto", produto.CodigoBarras);
@@ -212,6 +220,10 @@ namespace CadastroProdutos
                         foreach (var produto in produtosParaVenda)
                         {
                             sql = "UPDATE produtos_cadastrados SET estoque_produto = estoque_produto - @quantidade WHERE codigo_barras = @codigo_barras";
+
+                            // Mesma coisa aqui, passando a nova query
+                            cmd = new MySqlCommand(sql, cConexao.conexao);
+
                             cmd.Parameters.Clear();
                             cmd.Parameters.AddWithValue("@quantidade", produto.Quantidade);
                             cmd.Parameters.AddWithValue("@codigo_barras", produto.CodigoBarras);

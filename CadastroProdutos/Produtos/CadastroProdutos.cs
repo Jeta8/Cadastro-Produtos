@@ -87,17 +87,31 @@ namespace CadastroProdutos
                 produto.NomeProduto = nomeProduto;
                 produto.CodigoBarras = codigoBarras;
                 produto.PrecoProduto = decimal.Parse(precoProduto);
-                produto.EstoqueProduto = int.Parse(estoqueProduto);
+
+                // Sem tratamento para valores acima do comportado pelo tipo int
+                // Correção:
+                try
+                {
+                    produto.EstoqueProduto = int.Parse(estoqueProduto);
+                }
+                catch (OverflowException)
+                {
+                    produto.EstoqueProduto = int.MaxValue;
+                    Console.WriteLine("O estoque do produto foi alterado para o máximo permitido.");
+                }
+
 
                 try
                 {
                     cConexao.Conectar();
                     sql = "INSERT INTO produtos_cadastrados (nome_produto, codigo_barras, preco_produto, estoque_produto) VALUES (@nomeProduto, @codigoBarras, @precoProduto, @estoqueProduto)";
                     cmd = new MySqlCommand(sql, cConexao.conexao);
-                    cmd.Parameters.AddWithValue("@nomeProduto", nomeProduto);
-                    cmd.Parameters.AddWithValue("@codigoBarras", codigoBarras);
-                    cmd.Parameters.AddWithValue("@precoProduto", precoProduto);
-                    cmd.Parameters.AddWithValue("@estoqueProduto", estoqueProduto);
+
+                    // Visto que o tratamento e formatação é feito no novo item produto, o certo é passar eles aqui
+                    cmd.Parameters.AddWithValue("@nomeProduto", produto.NomeProduto);
+                    cmd.Parameters.AddWithValue("@codigoBarras", produto.CodigoBarras);
+                    cmd.Parameters.AddWithValue("@precoProduto", produto.PrecoProduto);
+                    cmd.Parameters.AddWithValue("@estoqueProduto", produto.EstoqueProduto);
                     cmd.ExecuteNonQuery();
                     cConexao.Desconectar();
                 }
@@ -110,10 +124,12 @@ namespace CadastroProdutos
                 }
 
                 Console.WriteLine("Produto cadastrado com sucesso!\n");
-                Console.WriteLine("Nome do Produto: " + nomeProduto);
-                Console.WriteLine("Código de Barras: " + codigoBarras);
-                Console.WriteLine("Preço do Produto: " + precoProduto);
-                Console.WriteLine("Estoque do Produto: " + estoqueProduto);
+
+                // Aqui também
+                Console.WriteLine("Nome do Produto: " + produto.NomeProduto);
+                Console.WriteLine("Código de Barras: " + produto.CodigoBarras);
+                Console.WriteLine("Preço do Produto: " + produto.PrecoProduto);
+                Console.WriteLine("Estoque do Produto: " + produto.EstoqueProduto);
                 Console.WriteLine();
                 Console.WriteLine("Deseja cadastrar um novo produto? (S/N)");
                 string confirmacao = Console.ReadLine();
